@@ -57,7 +57,7 @@ const Header = () => {
           letterSpacing="wide"
           fontFamily="Arial Black"
         >
-          e Shop
+          Quickify
         </Heading>
       </Link>
 
