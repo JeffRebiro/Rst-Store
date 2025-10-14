@@ -171,7 +171,7 @@ const ProductListScreen = () => {
                     <Tr key={product._id} _hover={{ bg: hoverColor }}>
                       <Td>{product._id}</Td>
                       <Td>{product.name}</Td>
-                      <Td>₹{product.price.toFixed(2)}</Td>
+                      <Td>${product.price.toFixed(2)}</Td>
                       <Td>{product.category}</Td>
                       <Td>{product.brand}</Td>
                       <Td>
@@ -242,7 +242,7 @@ const ProductListScreen = () => {
                     {product.name}
                   </Text>
                   <Text fontSize="sm" color="gray.600">
-                    Price: ₹{product.price.toFixed(2)}
+                    Price: ${product.price.toFixed(2)}
                   </Text>
                   <Text fontSize="sm" color="gray.600">
                     Category: {product.category}

@@ -47,7 +47,7 @@ const ProductCard = ({ product }) => {
           <Flex alignItems="center" justifyContent="space-between">
             <Rating value={product.rating} color="yellow.500" />
             <Text fontSize="xl" fontWeight="semibold" color="blue.600">
-              ₹{product.price}
+              ${product.price}
             </Text>
           </Flex>
         </Flex>
@@ -95,7 +95,7 @@ export default ProductCard;
 //           <Flex alignItems="center" justifyContent="space-between">
 //             <Rating value={product.rating} color="yellow.500" />
 //             <Text fontSize="4xl" fontWeight="bold" color="blue.600">
-//               ₹{product.price}
+//               ${product.price}
 //             </Text>
 //           </Flex>
 //         </Flex>

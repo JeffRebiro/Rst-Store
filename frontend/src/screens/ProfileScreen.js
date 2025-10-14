@@ -171,7 +171,7 @@ const ProfileScreen = () => {
                 <Tr key={order._id}>
                   <Td>{order._id}</Td>
                   <Td>{new Date(order.createdAt).toDateString()}</Td>
-                  <Td>₹{order.totalPrice}</Td>
+                  <Td>${order.totalPrice}</Td>
                   <Td>
                     {order.isPaid ? (
                       new Date(order.paidAt).toDateString()

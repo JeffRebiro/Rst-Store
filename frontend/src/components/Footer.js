@@ -11,7 +11,7 @@ const Footer = () => {
       mt="4"
     >
       <Text color="whitesmoke" fontFamily="Verdana" fontSize="1.1rem">
-        Copyrights {new Date().getFullYear()} || Alpha Cart || All Rights
+        Copyrights {new Date().getFullYear()} || RST STORE || All Rights
         Reserved
       </Text>
     </Flex>

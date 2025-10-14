@@ -100,7 +100,7 @@ const CartScreen = () => {
 
                   {/* Product Price */}
                   <Text fontWeight="bold" fontSize="lg" color="blue.600">
-                    ₹{item.price}
+                    ${item.price}
                   </Text>
 
                   {/* Quantity Select Box */}
@@ -154,7 +154,7 @@ const CartScreen = () => {
                 items)
               </Text>
               <Text fontWeight="bold" fontSize="3xl" color="green.600" mb="6">
-                ₹{" "}
+                ${" "}
                 {cartItems.reduce(
                   (acc, currVal) => acc + currVal.price * currVal.qty,
                   0
@@ -302,7 +302,7 @@ export default CartScreen;
 
 //                   {/* Product Price */}
 //                   <Text fontWeight="bold" fontSize="lg" color="blue.600">
-//                     ₹{item.price}
+//                     ${item.price}
 //                   </Text>
 
 //                   {/* Quantity Select Box */}
@@ -352,7 +352,7 @@ export default CartScreen;
 //                 {cartItems.reduce((acc, currVal) => acc + currVal.qty, 0)} items)
 //               </Text>
 //               <Text fontWeight="bold" fontSize="3xl" color="green.600" mb="6">
-//                 ₹{" "}
+//                 ${" "}
 //                 {cartItems.reduce(
 //                   (acc, currVal) => acc + currVal.price * currVal.qty,
 //                   0

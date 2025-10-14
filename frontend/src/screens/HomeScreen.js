@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Heading, Image, Text, VStack, Stack } from "@chakra-ui/react";
+import { Box, Grid, Heading, Text, Stack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listProducts } from "../actions/productActions";
@@ -27,17 +27,6 @@ const HomeScreen = () => {
         textAlign="center"
         color="black"
       >
-        <VStack spacing="6">
-          <Heading fontSize={{ base: "2xl", md: "4xl", lg: "5xl" }}>
-            Welcome to Our Store
-          </Heading>
-          <Text fontSize={{ base: "md", md: "lg" }} maxW="2xl">
-            Discover the best products at unbeatable prices. Shop now and enjoy our offers!
-          </Text>
-          <Button colorScheme="teal" size="lg" onClick={() => navigate("/cart")}>
-            Shop Now
-          </Button>
-        </VStack>
       </Box>
 
       {/* Featured Products Heading */}

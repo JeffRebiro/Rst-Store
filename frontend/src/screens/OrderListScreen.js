@@ -11,7 +11,6 @@ import {
 	Stack,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { IoCloseCircleSharp } from 'react-icons/io5';
 import { HiOutlineClipboardList } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -29,8 +28,10 @@ const OrderListScreen = () => {
 	const userLogin = useSelector((state) => state.userLogin);
 	const { userInfo } = userLogin;
 
+	// Move ALL hooks to the top level - never call hooks conditionally
 	const cardBg = useColorModeValue('white', 'gray.800');
 	const cardHoverBg = useColorModeValue('gray.50', 'gray.700');
+	const containerBg = useColorModeValue('gray.100', 'gray.900'); // Added this line
 
 	useEffect(() => {
 		if (userInfo && userInfo.isAdmin) {
@@ -55,7 +56,7 @@ const OrderListScreen = () => {
 				<Message type="error">{error}</Message>
 			) : (
 				<Box
-					bg={useColorModeValue('gray.100', 'gray.900')}
+					bg={containerBg} // Use the pre-defined variable here instead of calling useColorModeValue conditionally
 					p={{ base: 2, md: 5 }}
 					rounded="lg"
 					mx={{ base: 2, md: 10 }}
@@ -95,7 +96,7 @@ const OrderListScreen = () => {
 										<strong>Date:</strong> {order.createdAt.substring(0, 10)}
 									</Text>
 									<Text fontSize="sm">
-										<strong>Total:</strong> ₹{order.totalPrice.toFixed(2)}
+										<strong>Total:</strong> ${order.totalPrice.toFixed(2)}
 									</Text>
 
 									<Flex gap={2} flexWrap="wrap">

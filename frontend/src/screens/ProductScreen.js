@@ -110,7 +110,7 @@ const ProductScreen = () => {
               </Flex>
               <Divider />
               <Text fontSize="2xl" fontWeight="bold" color="teal.800">
-                ₹{product.price}
+                ${product.price}
               </Text>
 
               <Badge
@@ -352,7 +352,7 @@ export default ProductScreen;
 //                   mb="4"
 //                 />
 //                 <Text fontSize="xl" fontWeight="bold" color="teal.800">
-//                   ₹{product.price}
+//                   ${product.price}
 //                 </Text>
 //                 <Text mt="4" color="gray.700">
 //                   {product.description}
@@ -363,7 +363,7 @@ export default ProductScreen;
 //               <Box mt="8" p="6" bg="gray.50" borderRadius="lg" boxShadow="sm">
 //                 <Flex justifyContent="space-between" mb="4">
 //                   <Text>Price:</Text>
-//                   <Text fontWeight="bold">₹{product.price}</Text>
+//                   <Text fontWeight="bold">${product.price}</Text>
 //                 </Flex>
 //                 <Flex justifyContent="space-between" mb="4">
 //                   <Text>Status:</Text>

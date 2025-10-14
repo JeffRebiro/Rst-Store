@@ -145,7 +145,7 @@ const PlaceOrderScreen = () => {
                       </Link>
                     </Flex>
                     <Text fontSize="md" fontWeight="semibold">
-                      {item.qty} x ₹{item.price} = ₹{item.qty * item.price}
+                      {item.qty} x ${item.price} = ${item.qty * item.price}
                     </Text>
                   </Flex>
                 ))}
@@ -170,19 +170,19 @@ const PlaceOrderScreen = () => {
           <Stack spacing={4}>
             <Flex justify="space-between">
               <Text fontSize="md">Items</Text>
-              <Text fontWeight="bold">₹{cart.itemsPrice}</Text>
+              <Text fontWeight="bold">${cart.itemsPrice}</Text>
             </Flex>
             <Divider />
 
             <Flex justify="space-between">
               <Text fontSize="md">Shipping</Text>
-              <Text fontWeight="bold">₹{cart.shippingPrice}</Text>
+              <Text fontWeight="bold">${cart.shippingPrice}</Text>
             </Flex>
             <Divider />
 
             <Flex justify="space-between">
               <Text fontSize="md">Tax</Text>
-              <Text fontWeight="bold">₹{cart.taxPrice}</Text>
+              <Text fontWeight="bold">${cart.taxPrice}</Text>
             </Flex>
             <Divider />
 
@@ -191,7 +191,7 @@ const PlaceOrderScreen = () => {
                 Total
               </Text>
               <Text fontWeight="extrabold" fontSize="lg">
-                ₹{cart.totalPrice}
+                ${cart.totalPrice}
               </Text>
             </Flex>
           </Stack>
@@ -348,7 +348,7 @@ export default PlaceOrderScreen;
 //                       </Link>
 //                     </Flex>
 //                     <Text fontWeight="semibold" fontSize="lg">
-//                       {item.qty} x ₹{item.price} = ₹{+item.qty * item.price}
+//                       {item.qty} x ${item.price} = ${+item.qty * item.price}
 //                     </Text>
 //                   </Flex>
 //                 ))}
@@ -378,7 +378,7 @@ export default PlaceOrderScreen;
 //             <Flex justifyContent="space-between" py="2">
 //               <Text fontSize="lg">Items</Text>
 //               <Text fontWeight="bold" fontSize="lg">
-//                 ₹{cart.itemsPrice}
+//                 ${cart.itemsPrice}
 //               </Text>
 //             </Flex>
 //             <Divider />
@@ -387,7 +387,7 @@ export default PlaceOrderScreen;
 //             <Flex justifyContent="space-between" py="2">
 //               <Text fontSize="lg">Shipping</Text>
 //               <Text fontWeight="bold" fontSize="lg">
-//                 ₹{cart.shippingPrice}
+//                 ${cart.shippingPrice}
 //               </Text>
 //             </Flex>
 //             <Divider />
@@ -396,7 +396,7 @@ export default PlaceOrderScreen;
 //             <Flex justifyContent="space-between" py="2">
 //               <Text fontSize="lg">Tax</Text>
 //               <Text fontWeight="bold" fontSize="lg">
-//                 ₹{cart.taxPrice}
+//                 ${cart.taxPrice}
 //               </Text>
 //             </Flex>
 //             <Divider />
@@ -405,7 +405,7 @@ export default PlaceOrderScreen;
 //             <Flex justifyContent="space-between" py="2">
 //               <Text fontSize="lg">Total</Text>
 //               <Text fontWeight="bold" fontSize="lg">
-//                 ₹{cart.totalPrice}
+//                 ${cart.totalPrice}
 //               </Text>
 //             </Flex>
 //           </Box>
