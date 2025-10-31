@@ -12,19 +12,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
-import {
-  listProductDetails,
-  updateProduct,
-  createProduct,
-} from "../actions/productActions";
+import { createProduct, listProductDetails, updateProduct } from "../actions/productActions";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+import { PRODUCT_UPDATE_RESET, PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { id: productId } = useParams();
 
   const [name, setName] = useState("");
@@ -34,19 +31,42 @@ const ProductEditScreen = () => {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [countInStock, setCountInStock] = useState(0);
+  const [uploading, setUploading] = useState(false);
+
+  // Check if we're in "add" mode
+  const isAddMode = productId === "new";
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
 
   const productUpdate = useSelector((state) => state.productUpdate);
-  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } =
-    productUpdate;
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = productUpdate;
+
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
 
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
       navigate(`/admin/productlist`);
-    } else if (productId) {
+    }
+
+    if (successCreate) {
+      dispatch({ type: PRODUCT_CREATE_RESET });
+      navigate(`/admin/productlist`);
+    }
+
+    if (!isAddMode) {
+      // Edit mode - load product details
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId));
       } else {
@@ -58,41 +78,84 @@ const ProductEditScreen = () => {
         setCountInStock(product.countInStock);
         setDescription(product.description);
       }
+    } else {
+      // Add mode - reset all fields
+      setName("");
+      setPrice(0);
+      setImage("");
+      setBrand("");
+      setCategory("");
+      setCountInStock(0);
+      setDescription("");
     }
-  }, [dispatch, navigate, productId, product, successUpdate]);
+  }, [
+    dispatch,
+    navigate,
+    productId,
+    product,
+    successUpdate,
+    successCreate,
+    isAddMode,
+  ]);
 
   const submitHandler = (e) => {
     e.preventDefault();
 
-    const productData = {
-      name,
-      price,
-      image,
-      brand,
-      category,
-      description,
-      countInStock,
-    };
-
-    if (productId) {
-      dispatch(updateProduct({ _id: productId, ...productData }));
+    if (isAddMode) {
+      // Create new product
+      dispatch(
+        createProduct({
+          name,
+          price,
+          image,
+          brand,
+          category,
+          description,
+          countInStock,
+        })
+      );
     } else {
-      dispatch(createProduct(productData));
+      // Update existing product
+      dispatch(
+        updateProduct({
+          _id: productId,
+          name,
+          price,
+          image,
+          brand,
+          category,
+          description,
+          countInStock,
+        })
+      );
     }
   };
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const { data } = await axios.post("/api/uploads", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setImage(data);
+      setUploading(true);
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const { data } = await axios.post(`/api/uploads`, formData, config);
+      
+      // Handle different response formats
+      const imageUrl = data.image || data.path || data;
+      setImage(imageUrl);
+      
+      setUploading(false);
     } catch (err) {
-      console.error(err);
+      console.error("Upload error:", err);
+      setUploading(false);
     }
   };
 
@@ -105,29 +168,33 @@ const ProductEditScreen = () => {
       <Flex w="full" alignItems="center" justifyContent="center" py="5">
         <FormContainer>
           <Heading as="h1" mb="8" fontSize="3xl">
-            {productId ? "Edit Product" : "Create Product"}
+            {isAddMode ? "Add Product" : "Edit Product"}
           </Heading>
 
           {loadingUpdate && <Loader />}
           {errorUpdate && <Message type="error">{errorUpdate}</Message>}
+          {loadingCreate && <Loader />}
+          {errorCreate && <Message type="error">{errorCreate}</Message>}
 
-          {loading ? (
+          {!isAddMode && loading ? (
             <Loader />
-          ) : error ? (
+          ) : !isAddMode && error ? (
             <Message type="error">{error}</Message>
           ) : (
             <form onSubmit={submitHandler}>
+              {/* NAME */}
               <FormControl id="name" isRequired>
                 <FormLabel>Name</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Enter name"
+                  placeholder="Enter product name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
               <Spacer h="3" />
 
+              {/* PRICE */}
               <FormControl id="price" isRequired>
                 <FormLabel>Price</FormLabel>
                 <Input
@@ -135,33 +202,40 @@ const ProductEditScreen = () => {
                   placeholder="Enter price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  min="0"
+                  step="0.01"
                 />
               </FormControl>
               <Spacer h="3" />
 
-              <FormControl id="image" isRequired>
-                <FormLabel>Image</FormLabel>
+              {/* IMAGE */}
+              <FormControl id="image">
+                <FormLabel>Image URL</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Enter image url"
+                  placeholder="Enter image URL"
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
                 />
-                <Input type="file" onChange={uploadFileHandler} />
-              </FormControl>
-              <Spacer h="3" />
-
-              <FormControl id="description" isRequired>
-                <FormLabel>Description</FormLabel>
+                <Spacer h="2" />
+                <FormLabel>Or upload image</FormLabel>
                 <Input
-                  type="text"
-                  placeholder="Enter description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  type="file"
+                  onChange={uploadFileHandler}
+                  accept="image/*"
                 />
+                {uploading && <Loader size="sm" />}
+                {image && (
+                  <Spacer h="2">
+                    <Text fontSize="sm" color="green.500">
+                      Image URL: {image}
+                    </Text>
+                  </Spacer>
+                )}
               </FormControl>
               <Spacer h="3" />
 
+              {/* BRAND */}
               <FormControl id="brand" isRequired>
                 <FormLabel>Brand</FormLabel>
                 <Input
@@ -173,6 +247,7 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
+              {/* CATEGORY */}
               <FormControl id="category" isRequired>
                 <FormLabel>Category</FormLabel>
                 <Input
@@ -184,19 +259,41 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
+              {/* COUNT IN STOCK */}
               <FormControl id="countInStock" isRequired>
                 <FormLabel>Count In Stock</FormLabel>
                 <Input
                   type="number"
-                  placeholder="Product in stock"
+                  placeholder="Enter quantity in stock"
                   value={countInStock}
                   onChange={(e) => setCountInStock(e.target.value)}
+                  min="0"
                 />
               </FormControl>
               <Spacer h="3" />
 
-              <Button type="submit" colorScheme="teal" mt="4">
-                {productId ? "Update" : "Create"}
+              {/* DESCRIPTION */}
+              <FormControl id="description" isRequired>
+                <FormLabel>Description</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Enter description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </FormControl>
+              <Spacer h="3" />
+
+              <Button
+                type="submit"
+                isLoading={isAddMode ? loadingCreate : loadingUpdate}
+                loadingText={isAddMode ? "Creating..." : "Updating..."}
+                colorScheme="teal"
+                mt="4"
+                size="lg"
+                width="full"
+              >
+                {isAddMode ? "Create Product" : "Update Product"}
               </Button>
             </form>
           )}
