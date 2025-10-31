@@ -6,6 +6,7 @@ import {
   Heading,
   Input,
   Link,
+  Text,
   Spacer,
 } from "@chakra-ui/react";
 import axios from "axios";
