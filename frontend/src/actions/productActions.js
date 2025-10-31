@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import {
   PRODUCT_CREATE_FAIL,
   PRODUCT_CREATE_REQUEST,
@@ -21,11 +20,12 @@ import {
   PRODUCT_REVIEW_CREATE_SUCCESS,
 } from "../constants/productConstants";
 
+// ✅ List all products
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get("/api/products");
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/`);
 
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
   } catch (err) {
@@ -39,11 +39,12 @@ export const listProducts = () => async (dispatch) => {
   }
 };
 
+// ✅ Get product details
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`/api/products/${id}`);
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/${id}/`);
 
     dispatch({ type: PRODUCT_DETAILS_SUCCESS, payload: data });
   } catch (err) {
@@ -57,6 +58,7 @@ export const listProductDetails = (id) => async (dispatch) => {
   }
 };
 
+// ✅ Delete a product
 export const deleteProduct = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_DELETE_REQUEST });
@@ -71,7 +73,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`/api/products/${id}`, config);
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}/`, config);
 
     dispatch({ type: PRODUCT_DELETE_SUCCESS });
   } catch (err) {
@@ -85,7 +87,8 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 };
 
-export const createProduct = () => async (dispatch, getState) => {
+// ✅ Create a new product (with image upload support)
+export const createProduct = (formData) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_CREATE_REQUEST });
 
@@ -96,11 +99,15 @@ export const createProduct = () => async (dispatch, getState) => {
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     };
 
-    const { data } = await axios.post(`/api/products`, {}, config);
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/products/`,
+      formData,
+      config
+    );
 
     dispatch({ type: PRODUCT_CREATE_SUCCESS, payload: data });
   } catch (err) {
@@ -114,7 +121,8 @@ export const createProduct = () => async (dispatch, getState) => {
   }
 };
 
-export const updateProduct = (product) => async (dispatch, getState) => {
+// ✅ Update an existing product
+export const updateProduct = (productId, formData) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_UPDATE_REQUEST });
 
@@ -125,13 +133,13 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     };
 
     const { data } = await axios.put(
-      `/api/products/${product._id}`,
-      product,
+      `${import.meta.env.VITE_API_URL}/api/products/${productId}/`,
+      formData,
       config
     );
 
@@ -147,6 +155,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
   }
 };
 
+// ✅ Create a product review
 export const createProductReview =
   (productId, review) => async (dispatch, getState) => {
     try {
@@ -163,7 +172,11 @@ export const createProductReview =
         },
       };
 
-      await axios.post(`/api/products/${productId}/reviews`, review, config);
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/products/${productId}/reviews/`,
+        review,
+        config
+      );
 
       dispatch({ type: PRODUCT_REVIEW_CREATE_SUCCESS });
     } catch (err) {
