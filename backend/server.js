@@ -2,6 +2,7 @@ import colors from "colors";
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 import connectDB from "./config/db.js";
@@ -17,15 +18,24 @@ connectDB();
 const app = express();
 app.use(express.json()); // Parse JSON bodies
 
+// Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Ensure uploads/ folder exists at runtime
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// ✅ Serve uploaded files statically
+app.use("/uploads", express.static(uploadDir));
+
 // API Routes
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/uploads", uploadRoutes);
-
-// Fix __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
