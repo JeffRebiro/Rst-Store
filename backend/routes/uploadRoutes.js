@@ -1,3 +1,4 @@
+import path from 'path'; // ADD THIS IMPORT
 import express from 'express';
 import multer from 'multer';
 import { protect, admin } from '../middlewares/authMiddleware.js';
@@ -16,6 +17,14 @@ function checkFileType(file, cb) {
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
+  console.log('📄 File details:', {
+    name: file.originalname,
+    type: file.mimetype,
+    extension: path.extname(file.originalname),
+    extValid: extname,
+    mimeValid: mimetype
+  });
+
   if (extname && mimetype) {
     console.log('✅ File type validated successfully');
     return cb(null, true);
@@ -27,8 +36,9 @@ function checkFileType(file, cb) {
 }
 
 const upload = multer({
-  storage: storage, // Memory storage
+  storage: storage,
   fileFilter: function (req, file, cb) {
+    console.log('🔄 Multer fileFilter called');
     checkFileType(file, cb);
   },
   limits: { fileSize: 5000000 },
