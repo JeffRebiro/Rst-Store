@@ -85,7 +85,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 };
 
-export const createProduct = (productData) => async (dispatch, getState) => {
+export const createProduct = () => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_CREATE_REQUEST });
 
@@ -100,8 +100,7 @@ export const createProduct = (productData) => async (dispatch, getState) => {
       },
     };
 
-    // Send the actual product data instead of empty object
-    const { data } = await axios.post(`/api/products`, productData, config);
+    const { data } = await axios.post(`/api/products`, {}, config);
 
     dispatch({ type: PRODUCT_CREATE_SUCCESS, payload: data });
   } catch (err) {

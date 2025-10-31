@@ -94,8 +94,7 @@ const ProductListScreen = () => {
   };
 
   const createProductHandler = () => {
-    // Instead of dispatching createProduct, navigate to the add product screen
-    navigate('/admin/product/new');
+    dispatch(createProduct());
   };
 
   const filteredProducts = products.filter((product) =>
