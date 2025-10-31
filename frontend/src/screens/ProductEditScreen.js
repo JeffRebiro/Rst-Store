@@ -254,14 +254,9 @@ const ProductEditScreen = () => {
               {/* IMAGE */}
               <FormControl id="image">
                 <FormLabel>Image</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Enter image URL"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                />
+                
                 <Spacer h="2" />
-                <FormLabel>Or upload image</FormLabel>
+                <FormLabel> Upload image</FormLabel>
                 <Input
                   type="file"
                   onChange={uploadFileHandler}
