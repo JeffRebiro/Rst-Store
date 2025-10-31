@@ -8,21 +8,30 @@ import {
   Link,
   Spacer,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
-import { createProduct, listProductDetails, updateProduct } from "../actions/productActions";
+import {
+  createProduct,
+  listProductDetails,
+  updateProduct,
+} from "../actions/productActions";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { PRODUCT_UPDATE_RESET, PRODUCT_CREATE_RESET } from "../constants/productConstants";
+import {
+  PRODUCT_UPDATE_RESET,
+  PRODUCT_CREATE_RESET,
+} from "../constants/productConstants";
 
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: productId } = useParams();
+  const toast = useToast();
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -85,7 +94,6 @@ const ProductEditScreen = () => {
         dispatch(listProductDetails(productId));
       }
     } else if (isAddMode) {
-      // Add mode - reset all fields
       setName("");
       setPrice(0);
       setImage("");
@@ -108,14 +116,34 @@ const ProductEditScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!name || !price || !brand || !category || !description || countInStock === undefined) {
-      alert("Please fill all required fields");
+    if (uploading) {
+      toast({
+        title: "Please wait for the image to finish uploading.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (
+      !name ||
+      !price ||
+      !brand ||
+      !category ||
+      !description ||
+      countInStock === undefined
+    ) {
+      toast({
+        title: "Please fill all required fields.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
 
     if (isAddMode) {
-      // Create new product
       dispatch(
         createProduct({
           name,
@@ -128,7 +156,6 @@ const ProductEditScreen = () => {
         })
       );
     } else {
-      // Update existing product
       dispatch(
         updateProduct({
           _id: productId,
@@ -148,16 +175,14 @@ const ProductEditScreen = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      setUploadError('Please select a valid image file (JPEG, PNG, WebP)');
+      setUploadError("Please select a valid image file (JPEG, PNG, WebP)");
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError('File size must be less than 5MB');
+      setUploadError("File size must be less than 5MB");
       return;
     }
 
@@ -168,40 +193,34 @@ const ProductEditScreen = () => {
       setUploading(true);
       setUploadError("");
 
-      // Get the token from userInfo - FIXED THIS LINE
       const token = userInfo?.token;
-
       if (!token) {
-        setUploadError('Please log in to upload images');
+        setUploadError("Please log in to upload images");
         setUploading(false);
         return;
       }
 
-      console.log('🔑 Token found:', token ? 'Yes' : 'No');
-
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, // Make sure this is included
+          Authorization: `Bearer ${token}`,
         },
       };
 
-      console.log('📤 Sending upload request with auth token...');
       const { data } = await axios.post(`/api/uploads`, formData, config);
 
-      console.log('✅ Upload successful:', data);
       setImage(data.image);
       setUploading(false);
     } catch (err) {
       console.error("❌ Upload error:", err);
-      console.error("📋 Error response:", err.response?.data);
       setUploadError(
         err.response?.data?.message ||
-        "Failed to upload image. Please try again."
+          "Failed to upload image. Please try again."
       );
       setUploading(false);
     }
   };
+
   return (
     <>
       <Link as={RouterLink} to="/admin/productlist">
@@ -254,9 +273,8 @@ const ProductEditScreen = () => {
               {/* IMAGE */}
               <FormControl id="image">
                 <FormLabel>Image</FormLabel>
-                
                 <Spacer h="2" />
-                <FormLabel> Upload image</FormLabel>
+                <FormLabel>Upload image</FormLabel>
                 <Input
                   type="file"
                   onChange={uploadFileHandler}
@@ -330,6 +348,7 @@ const ProductEditScreen = () => {
 
               <Button
                 type="submit"
+                isDisabled={uploading}
                 isLoading={isAddMode ? loadingCreate : loadingUpdate}
                 loadingText={isAddMode ? "Creating..." : "Updating..."}
                 colorScheme="teal"
