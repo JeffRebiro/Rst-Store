@@ -5,7 +5,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Image,
   Link,
   Spacer,
 } from "@chakra-ui/react";
@@ -13,11 +12,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
-import { listProductDetails, updateProduct } from "../actions/productActions";
+import {
+  listProductDetails,
+  updateProduct,
+  createProduct,
+} from "../actions/productActions";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+import { PRODUCT_UPDATE_RESET, PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
@@ -30,24 +33,24 @@ const ProductEditScreen = () => {
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [countInStock, setCountInStock] = useState(0);
-  const [uploading, setUploading] = useState(false);
+  const [countInStock, setCountInStock] = useState("");
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
 
   const productUpdate = useSelector((state) => state.productUpdate);
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = productUpdate;
+  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } =
+    productUpdate;
+
+  const productCreate = useSelector((state) => state.productCreate);
+  const { success: successCreate } = productCreate;
 
   useEffect(() => {
-    if (successUpdate) {
+    if (successUpdate || successCreate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
+      dispatch({ type: PRODUCT_CREATE_RESET });
       navigate("/admin/productlist");
-    } else {
+    } else if (productId) {
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId));
       } else {
@@ -60,53 +63,40 @@ const ProductEditScreen = () => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, navigate, productId, product, successUpdate]);
+  }, [dispatch, navigate, productId, product, successUpdate, successCreate]);
 
-  // ✅ Submit form with FormData (including image)
   const submitHandler = (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("brand", brand);
-    formData.append("category", category);
-    formData.append("description", description);
-    formData.append("countInStock", countInStock);
+    const productData = {
+      name,
+      price,
+      image,
+      brand,
+      category,
+      description,
+      countInStock,
+    };
 
-    // If a new image is selected, include it
-    if (typeof image === "object") {
-      formData.append("image", image);
+    if (productId) {
+      dispatch(updateProduct({ _id: productId, ...productData }));
+    } else {
+      dispatch(createProduct(productData));
     }
-
-    dispatch(updateProduct(productId, formData));
   };
 
-  // ✅ Upload image to server and set preview
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
-    setUploading(true);
+    const formData = new FormData();
+    formData.append("image", file);
     try {
-      const formData = new FormData();
-      formData.append("image", file);
-
       const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       };
-
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/uploads/`,
-        formData,
-        config
-      );
-
-      setImage(data); // URL returned by backend
-      setUploading(false);
-    } catch (error) {
-      console.error(error);
-      setUploading(false);
+      const { data } = await axios.post(`/api/uploads`, formData, config);
+      setImage(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -119,19 +109,17 @@ const ProductEditScreen = () => {
       <Flex w="full" alignItems="center" justifyContent="center" py="5">
         <FormContainer>
           <Heading as="h1" mb="8" fontSize="3xl">
-            Edit Product
+            {productId ? "Edit Product" : "Create Product"}
           </Heading>
 
           {loadingUpdate && <Loader />}
           {errorUpdate && <Message type="error">{errorUpdate}</Message>}
-
           {loading ? (
             <Loader />
           ) : error ? (
             <Message type="error">{error}</Message>
           ) : (
             <form onSubmit={submitHandler}>
-              {/* NAME */}
               <FormControl id="name" isRequired>
                 <FormLabel>Name</FormLabel>
                 <Input
@@ -143,7 +131,6 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              {/* PRICE */}
               <FormControl id="price" isRequired>
                 <FormLabel>Price</FormLabel>
                 <Input
@@ -155,34 +142,18 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              {/* IMAGE */}
               <FormControl id="image" isRequired>
                 <FormLabel>Image</FormLabel>
-                {image && (
-                  <Image
-                    src={
-                      image.startsWith("http")
-                        ? image
-                        : `${import.meta.env.VITE_API_URL}${image}`
-                    }
-                    alt={name}
-                    boxSize="150px"
-                    objectFit="cover"
-                    mb="2"
-                  />
-                )}
                 <Input
-                  type="file"
-                  onChange={(e) => {
-                    setImage(e.target.files[0]);
-                    uploadFileHandler(e);
-                  }}
+                  type="text"
+                  placeholder="Enter image URL"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
                 />
-                {uploading && <Loader />}
+                <Input type="file" onChange={uploadFileHandler} />
               </FormControl>
               <Spacer h="3" />
 
-              {/* DESCRIPTION */}
               <FormControl id="description" isRequired>
                 <FormLabel>Description</FormLabel>
                 <Input
@@ -194,7 +165,6 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              {/* BRAND */}
               <FormControl id="brand" isRequired>
                 <FormLabel>Brand</FormLabel>
                 <Input
@@ -206,7 +176,6 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              {/* CATEGORY */}
               <FormControl id="category" isRequired>
                 <FormLabel>Category</FormLabel>
                 <Input
@@ -218,7 +187,6 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              {/* COUNT IN STOCK */}
               <FormControl id="countInStock" isRequired>
                 <FormLabel>Count In Stock</FormLabel>
                 <Input
@@ -230,13 +198,8 @@ const ProductEditScreen = () => {
               </FormControl>
               <Spacer h="3" />
 
-              <Button
-                type="submit"
-                isLoading={loadingUpdate}
-                colorScheme="teal"
-                mt="4"
-              >
-                Update
+              <Button type="submit" colorScheme="teal" mt="4">
+                {productId ? "Update" : "Create"}
               </Button>
             </form>
           )}

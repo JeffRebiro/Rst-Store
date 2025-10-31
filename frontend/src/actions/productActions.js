@@ -24,9 +24,7 @@ import {
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-
-    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/`);
-
+    const { data } = await axios.get("/api/products");
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
   } catch (err) {
     dispatch({
@@ -39,13 +37,11 @@ export const listProducts = () => async (dispatch) => {
   }
 };
 
-// ✅ Get product details
+// ✅ Get single product details
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
-
-    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/${id}/`);
-
+    const { data } = await axios.get(`/api/products/${id}`);
     dispatch({ type: PRODUCT_DETAILS_SUCCESS, payload: data });
   } catch (err) {
     dispatch({
@@ -62,19 +58,13 @@ export const listProductDetails = (id) => async (dispatch) => {
 export const deleteProduct = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_DELETE_REQUEST });
-
     const {
       userLogin: { userInfo },
     } = getState();
-
     const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
+      headers: { Authorization: `Bearer ${userInfo.token}` },
     };
-
-    await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}/`, config);
-
+    await axios.delete(`/api/products/${id}`, config);
     dispatch({ type: PRODUCT_DELETE_SUCCESS });
   } catch (err) {
     dispatch({
@@ -87,28 +77,20 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 };
 
-// ✅ Create a new product (with image upload support)
-export const createProduct = (formData) => async (dispatch, getState) => {
+// ✅ Create new product
+export const createProduct = (productData) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_CREATE_REQUEST });
-
     const {
       userLogin: { userInfo },
     } = getState();
-
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
     };
-
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/products/`,
-      formData,
-      config
-    );
-
+    const { data } = await axios.post(`/api/products`, productData, config);
     dispatch({ type: PRODUCT_CREATE_SUCCESS, payload: data });
   } catch (err) {
     dispatch({
@@ -121,28 +103,20 @@ export const createProduct = (formData) => async (dispatch, getState) => {
   }
 };
 
-// ✅ Update an existing product
-export const updateProduct = (productId, formData) => async (dispatch, getState) => {
+// ✅ Update existing product
+export const updateProduct = (product) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_UPDATE_REQUEST });
-
     const {
       userLogin: { userInfo },
     } = getState();
-
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
     };
-
-    const { data } = await axios.put(
-      `${import.meta.env.VITE_API_URL}/api/products/${productId}/`,
-      formData,
-      config
-    );
-
+    const { data } = await axios.put(`/api/products/${product._id}`, product, config);
     dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
   } catch (err) {
     dispatch({
@@ -156,36 +130,27 @@ export const updateProduct = (productId, formData) => async (dispatch, getState)
 };
 
 // ✅ Create a product review
-export const createProductReview =
-  (productId, review) => async (dispatch, getState) => {
-    try {
-      dispatch({ type: PRODUCT_REVIEW_CREATE_REQUEST });
-
-      const {
-        userLogin: { userInfo },
-      } = getState();
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-          "Content-Type": "application/json",
-        },
-      };
-
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/products/${productId}/reviews/`,
-        review,
-        config
-      );
-
-      dispatch({ type: PRODUCT_REVIEW_CREATE_SUCCESS });
-    } catch (err) {
-      dispatch({
-        type: PRODUCT_REVIEW_CREATE_FAIL,
-        payload:
-          err.response && err.response.data.message
-            ? err.response.data.message
-            : err.message,
-      });
-    }
-  };
+export const createProductReview = (productId, review) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_REVIEW_CREATE_REQUEST });
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "application/json",
+      },
+    };
+    await axios.post(`/api/products/${productId}/reviews`, review, config);
+    dispatch({ type: PRODUCT_REVIEW_CREATE_SUCCESS });
+  } catch (err) {
+    dispatch({
+      type: PRODUCT_REVIEW_CREATE_FAIL,
+      payload:
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message,
+    });
+  }
+};
