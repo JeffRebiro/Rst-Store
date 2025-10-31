@@ -20,7 +20,7 @@ import {
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { PRODUCT_UPDATE_RESET, PRODUCT_CREATE_RESET } from "../constants/productConstants";
+import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
 
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const ProductEditScreen = () => {
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [countInStock, setCountInStock] = useState("");
+  const [countInStock, setCountInStock] = useState(0);
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
@@ -42,14 +42,10 @@ const ProductEditScreen = () => {
   const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } =
     productUpdate;
 
-  const productCreate = useSelector((state) => state.productCreate);
-  const { success: successCreate } = productCreate;
-
   useEffect(() => {
-    if (successUpdate || successCreate) {
+    if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
-      dispatch({ type: PRODUCT_CREATE_RESET });
-      navigate("/admin/productlist");
+      navigate(`/admin/productlist`);
     } else if (productId) {
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId));
@@ -63,7 +59,7 @@ const ProductEditScreen = () => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, navigate, productId, product, successUpdate, successCreate]);
+  }, [dispatch, navigate, productId, product, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -89,11 +85,11 @@ const ProductEditScreen = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("image", file);
+
     try {
-      const config = {
+      const { data } = await axios.post("/api/uploads", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      };
-      const { data } = await axios.post(`/api/uploads`, formData, config);
+      });
       setImage(data);
     } catch (err) {
       console.error(err);
@@ -114,6 +110,7 @@ const ProductEditScreen = () => {
 
           {loadingUpdate && <Loader />}
           {errorUpdate && <Message type="error">{errorUpdate}</Message>}
+
           {loading ? (
             <Loader />
           ) : error ? (
@@ -146,7 +143,7 @@ const ProductEditScreen = () => {
                 <FormLabel>Image</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Enter image URL"
+                  placeholder="Enter image url"
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
                 />
