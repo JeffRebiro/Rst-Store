@@ -50,7 +50,7 @@ const LoginScreen = () => {
           Login
         </Heading>
 
-        {error && <Message type="error">{error}</Message>}
+        {error && <Message type="error">Invalid username or password</Message>}
 
         <form onSubmit={submitHandler}>
           <FormControl id="email">

@@ -59,8 +59,7 @@ export const login = (email, password) => async (dispatch) => {
 
     if (
       err.response &&
-      err.response.status === 401 &&
-      err.response.data.message
+      err.response.status === 401
     ) {
       message = "Invalid username or password";
     } else if (err.response && err.response.data.message) {
