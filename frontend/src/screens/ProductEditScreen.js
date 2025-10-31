@@ -32,8 +32,8 @@ const ProductEditScreen = () => {
   const [description, setDescription] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
-  // Check if we're in "add" mode
   const isAddMode = productId === "new";
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -57,9 +57,9 @@ const ProductEditScreen = () => {
   } = productCreate;
 
   useEffect(() => {
-    // Redirect if not admin
     if (!userInfo || !userInfo.isAdmin) {
       navigate("/login");
+      return;
     }
 
     if (successUpdate) {
@@ -72,8 +72,7 @@ const ProductEditScreen = () => {
       navigate("/admin/productlist");
     }
 
-    if (!isAddMode) {
-      // Edit mode - load product details
+    if (!isAddMode && productId) {
       if (product && product._id === productId) {
         setName(product.name);
         setPrice(product.price);
@@ -85,7 +84,7 @@ const ProductEditScreen = () => {
       } else {
         dispatch(listProductDetails(productId));
       }
-    } else {
+    } else if (isAddMode) {
       // Add mode - reset all fields
       setName("");
       setPrice(0);
@@ -109,13 +108,19 @@ const ProductEditScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault();
 
+    // Basic validation
+    if (!name || !price || !brand || !category || !description || countInStock === undefined) {
+      alert("Please fill all required fields");
+      return;
+    }
+
     if (isAddMode) {
-      // Create new product with actual form data
+      // Create new product
       dispatch(
         createProduct({
           name,
           price: Number(price),
-          image,
+          image: image || "/images/sample.jpg",
           brand,
           category,
           description,
@@ -129,7 +134,7 @@ const ProductEditScreen = () => {
           _id: productId,
           name,
           price: Number(price),
-          image,
+          image: image || "/images/sample.jpg",
           brand,
           category,
           description,
@@ -143,11 +148,26 @@ const ProductEditScreen = () => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Please select a valid image file (JPEG, PNG, WebP)');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File size must be less than 5MB');
+      return;
+    }
+
     const formData = new FormData();
     formData.append("image", file);
 
     try {
       setUploading(true);
+      setUploadError("");
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -156,13 +176,14 @@ const ProductEditScreen = () => {
 
       const { data } = await axios.post(`/api/uploads`, formData, config);
       
-      // Handle different response formats
-      const imageUrl = data.image || data.path || data;
-      setImage(imageUrl);
-      
+      setImage(data.image);
       setUploading(false);
     } catch (err) {
       console.error("Upload error:", err);
+      setUploadError(
+        err.response?.data?.message || 
+        "Failed to upload image. Please try again."
+      );
       setUploading(false);
     }
   };
@@ -218,7 +239,7 @@ const ProductEditScreen = () => {
 
               {/* IMAGE */}
               <FormControl id="image">
-                <FormLabel>Image URL</FormLabel>
+                <FormLabel>Image</FormLabel>
                 <Input
                   type="text"
                   placeholder="Enter image URL"
@@ -230,14 +251,19 @@ const ProductEditScreen = () => {
                 <Input
                   type="file"
                   onChange={uploadFileHandler}
-                  accept="image/*"
+                  accept="image/jpeg, image/jpg, image/png, image/webp"
                 />
                 {uploading && <Loader size="sm" />}
-                {image && (
+                {uploadError && (
+                  <Text fontSize="sm" color="red.500" mt="2">
+                    {uploadError}
+                  </Text>
+                )}
+                {image && !uploading && (
                   <>
                     <Spacer h="2" />
                     <Text fontSize="sm" color="green.500">
-                      Image URL: {image}
+                      Image: {image}
                     </Text>
                   </>
                 )}
