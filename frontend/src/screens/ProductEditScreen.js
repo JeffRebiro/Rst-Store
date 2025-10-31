@@ -168,26 +168,40 @@ const ProductEditScreen = () => {
       setUploading(true);
       setUploadError("");
 
+      // Get the token from userInfo - FIXED THIS LINE
+      const token = userInfo?.token;
+
+      if (!token) {
+        setUploadError('Please log in to upload images');
+        setUploading(false);
+        return;
+      }
+
+      console.log('🔑 Token found:', token ? 'Yes' : 'No');
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // Make sure this is included
         },
       };
 
+      console.log('📤 Sending upload request with auth token...');
       const { data } = await axios.post(`/api/uploads`, formData, config);
-      
+
+      console.log('✅ Upload successful:', data);
       setImage(data.image);
       setUploading(false);
     } catch (err) {
-      console.error("Upload error:", err);
+      console.error("❌ Upload error:", err);
+      console.error("📋 Error response:", err.response?.data);
       setUploadError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         "Failed to upload image. Please try again."
       );
       setUploading(false);
     }
   };
-
   return (
     <>
       <Link as={RouterLink} to="/admin/productlist">
