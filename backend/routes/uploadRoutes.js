@@ -1,42 +1,25 @@
-import express from "express";
 import multer from "multer";
 import path from "path";
+import { fileURLToPath } from "url";
+import express from "express";
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, path.join(process.cwd(), "uploads")); // safer than relative path
+    cb(null, path.join(__dirname, "../uploads")); // absolute path
   },
   filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
-function checkFileTypes(file, cb) {
-  const filetypes = /jpeg|jpg|png/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    return cb(null, true);
-  } else {
-    cb("Only images are allowed");
-  }
-}
-
-const upload = multer({
-  storage,
-  fileFilter: function (req, file, cb) {
-    checkFileTypes(file, cb);
-  },
-});
+const upload = multer({ storage });
 
 router.post("/", upload.single("image"), (req, res) => {
-  res.send(`/${req.file.path}`);
+  res.send(`/uploads/${req.file.filename}`);
 });
 
 export default router;
