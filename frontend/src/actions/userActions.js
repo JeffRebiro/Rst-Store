@@ -55,12 +55,23 @@ export const login = (email, password) => async (dispatch) => {
 
     localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (err) {
+    let message = "Invalid username or password";
+
+    if (
+      err.response &&
+      err.response.status === 401 &&
+      err.response.data.message
+    ) {
+      message = "Invalid username or password";
+    } else if (err.response && err.response.data.message) {
+      message = err.response.data.message;
+    } else {
+      message = err.message;
+    }
+
     dispatch({
       type: USER_LOGIN_FAIL,
-      payload:
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : err.message,
+      payload: message,
     });
   }
 };
