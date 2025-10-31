@@ -6,8 +6,8 @@ import {
   Heading,
   Input,
   Link,
-  Text,
   Spacer,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -22,7 +22,6 @@ import { PRODUCT_UPDATE_RESET, PRODUCT_CREATE_RESET } from "../constants/product
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { id: productId } = useParams();
 
   const [name, setName] = useState("");
@@ -36,6 +35,9 @@ const ProductEditScreen = () => {
 
   // Check if we're in "add" mode
   const isAddMode = productId === "new";
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
@@ -52,25 +54,27 @@ const ProductEditScreen = () => {
     loading: loadingCreate,
     error: errorCreate,
     success: successCreate,
-    product: createdProduct,
   } = productCreate;
 
   useEffect(() => {
+    // Redirect if not admin
+    if (!userInfo || !userInfo.isAdmin) {
+      navigate("/login");
+    }
+
     if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
-      navigate(`/admin/productlist`);
+      navigate("/admin/productlist");
     }
 
     if (successCreate) {
       dispatch({ type: PRODUCT_CREATE_RESET });
-      navigate(`/admin/productlist`);
+      navigate("/admin/productlist");
     }
 
     if (!isAddMode) {
       // Edit mode - load product details
-      if (!product.name || product._id !== productId) {
-        dispatch(listProductDetails(productId));
-      } else {
+      if (product && product._id === productId) {
         setName(product.name);
         setPrice(product.price);
         setImage(product.image);
@@ -78,6 +82,8 @@ const ProductEditScreen = () => {
         setCategory(product.category);
         setCountInStock(product.countInStock);
         setDescription(product.description);
+      } else {
+        dispatch(listProductDetails(productId));
       }
     } else {
       // Add mode - reset all fields
@@ -97,22 +103,23 @@ const ProductEditScreen = () => {
     successUpdate,
     successCreate,
     isAddMode,
+    userInfo,
   ]);
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     if (isAddMode) {
-      // Create new product
+      // Create new product with actual form data
       dispatch(
         createProduct({
           name,
-          price,
+          price: Number(price),
           image,
           brand,
           category,
           description,
-          countInStock,
+          countInStock: Number(countInStock),
         })
       );
     } else {
@@ -121,12 +128,12 @@ const ProductEditScreen = () => {
         updateProduct({
           _id: productId,
           name,
-          price,
+          price: Number(price),
           image,
           brand,
           category,
           description,
-          countInStock,
+          countInStock: Number(countInStock),
         })
       );
     }
@@ -227,11 +234,12 @@ const ProductEditScreen = () => {
                 />
                 {uploading && <Loader size="sm" />}
                 {image && (
-                  <Spacer h="2">
+                  <>
+                    <Spacer h="2" />
                     <Text fontSize="sm" color="green.500">
                       Image URL: {image}
                     </Text>
-                  </Spacer>
+                  </>
                 )}
               </FormControl>
               <Spacer h="3" />
