@@ -46,6 +46,8 @@ function App() {
           <Route path="/admin/userlist" element={<UserListScreen />} />
           <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
           <Route path="/admin/productlist" element={<ProductListScreen />} />
+          {/* Add this route for creating new products */}
+          <Route path="/admin/product/new" element={<ProductEditScreen />} />
           <Route
             path="/admin/product/:id/edit"
             element={<ProductEditScreen />}

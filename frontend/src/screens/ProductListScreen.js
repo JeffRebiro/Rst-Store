@@ -94,9 +94,9 @@ const ProductListScreen = () => {
   };
 
   const createProductHandler = () => {
-  // Instead of dispatching createProduct, navigate to the add product screen
-  navigate('/admin/product/new');
-};
+    // Instead of dispatching createProduct, navigate to the add product screen
+    navigate('/admin/product/new');
+  };
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
