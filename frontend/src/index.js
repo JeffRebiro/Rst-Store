@@ -6,7 +6,7 @@ import { ThemeProvider } from "next-themes";
 
 import App from "./App";
 import store from "./store";
-import { Provider as UIProvider } from "@/components/ui/provider";
+import { Provider as UIProvider } from "./components/ui/provider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
