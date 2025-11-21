@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { ChakraProvider } from "@chakra-ui/react";
-import { extendTheme } from "@chakra-ui/theme";
+import { extendTheme } from "@chakra-ui/react/theme";
 import { ThemeProvider } from "next-themes";
 
 import App from "./App";
