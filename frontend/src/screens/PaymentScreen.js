@@ -1,20 +1,49 @@
 import {
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   VStack,
   Box,
+  useColorModeValue,
+  HStack,
+  useRadioGroup,
+  useRadio,
 } from "@chakra-ui/react";
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTheme as useNextTheme } from "next-themes";
 
-import * as RadioGroup from "@radix-ui/react-radio-group"; // <- Radix compound component
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 import FormContainer from "../components/FormContainer";
+
+// Radio Card component following Chakra compound pattern
+const RadioCard = (props) => {
+  const { getInputProps, getCheckboxProps } = useRadio(props);
+  const input = getInputProps();
+  const checkbox = getCheckboxProps();
+
+  return (
+    <Box as="label">
+      <input {...input} />
+      <Box
+        {...checkbox}
+        cursor="pointer"
+        borderWidth="1px"
+        borderRadius="md"
+        boxShadow="md"
+        _checked={{ bg: "teal.500", color: "white", borderColor: "teal.500" }}
+        _focus={{ boxShadow: "outline" }}
+        px={5}
+        py={3}
+      >
+        {props.children}
+      </Box>
+    </Box>
+  );
+};
 
 const PaymentScreen = () => {
   const dispatch = useDispatch();
@@ -30,10 +59,6 @@ const PaymentScreen = () => {
     paymentMethod || "paypal"
   );
 
-  const { theme } = useNextTheme(); 
-  const isLight = theme === "light";
-  const boxBg = isLight ? "white" : "gray.700";
-
   useEffect(() => {
     if (!userInfo) navigate("/login");
     if (!shippingAddress) navigate("/shipping");
@@ -45,10 +70,26 @@ const PaymentScreen = () => {
     navigate("/placeorder");
   };
 
+  // Options array
+  const options = ["paypal"]; // Add more options here if needed
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "paymentMethod",
+    value: paymentMethodRadio,
+    onChange: setPaymentMethodRadio,
+  });
+
+  const group = getRootProps();
+
   return (
     <Flex w="full" alignItems="center" justifyContent="center" py="10">
       <FormContainer>
-        <Box bg={boxBg} boxShadow="lg" p="8" rounded="lg">
+        <Box
+          bg={useColorModeValue("white", "gray.700")}
+          boxShadow="lg"
+          p="8"
+          rounded="lg"
+        >
           {/* Checkout Steps */}
           <CheckoutSteps step1 step2 step3 />
 
@@ -60,27 +101,31 @@ const PaymentScreen = () => {
           {/* Form */}
           <form onSubmit={submitHandler}>
             <VStack spacing="6" align="stretch">
-              {/* Payment Options using compound components */}
-              <RadioGroup.Root
-                value={paymentMethodRadio}
-                onValueChange={setPaymentMethodRadio}
-              >
-                <VStack align="start" spacing="4">
-                  <RadioGroup.Item value="paypal">
-                    <RadioGroup.ItemHiddenInput />
-                    <RadioGroup.ItemIndicator />
-                    <RadioGroup.ItemText>PayPal or Credit/Debit Card</RadioGroup.ItemText>
-                  </RadioGroup.Item>
-                  {/* Add more payment options here as needed */}
-                </VStack>
-              </RadioGroup.Root>
+              {/* Payment Method Options */}
+              <FormControl as="fieldset">
+                <FormLabel as="legend" fontWeight="bold">
+                  Payment Options
+                </FormLabel>
+                <HStack {...group} spacing="4">
+                  {options.map((value) => {
+                    const radio = getRadioProps({ value });
+                    return (
+                      <RadioCard key={value} {...radio}>
+                        {value === "paypal"
+                          ? "PayPal or Credit/Debit Card"
+                          : value}
+                      </RadioCard>
+                    );
+                  })}
+                </HStack>
+              </FormControl>
 
-              {/* Submit */}
+              {/* Submit Button */}
               <Button
                 type="submit"
                 colorScheme="teal"
                 size="lg"
-                w="full"
+                width="full"
                 mt="4"
                 _hover={{ bg: "teal.600" }}
               >
