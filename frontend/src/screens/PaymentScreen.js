@@ -1,16 +1,5 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  VStack,
-  Box,
-  useColorModeValue,
-  HStack,
-  useRadioGroup,
-  useRadio,
-} from "@chakra-ui/react";
+import { Button, Flex, Heading, VStack, Box, useColorModeValue } from "@chakra-ui/react";
+import * as RadioGroup from "@radix-ui/react-radio-group"; // Radix UI
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -18,32 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 import FormContainer from "../components/FormContainer";
-
-// Radio Card component following Chakra compound pattern
-const RadioCard = (props) => {
-  const { getInputProps, getCheckboxProps } = useRadio(props);
-  const input = getInputProps();
-  const checkbox = getCheckboxProps();
-
-  return (
-    <Box as="label">
-      <input {...input} />
-      <Box
-        {...checkbox}
-        cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        boxShadow="md"
-        _checked={{ bg: "teal.500", color: "white", borderColor: "teal.500" }}
-        _focus={{ boxShadow: "outline" }}
-        px={5}
-        py={3}
-      >
-        {props.children}
-      </Box>
-    </Box>
-  );
-};
 
 const PaymentScreen = () => {
   const dispatch = useDispatch();
@@ -70,17 +33,6 @@ const PaymentScreen = () => {
     navigate("/placeorder");
   };
 
-  // Options array
-  const options = ["paypal"]; // Add more options here if needed
-
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: "paymentMethod",
-    value: paymentMethodRadio,
-    onChange: setPaymentMethodRadio,
-  });
-
-  const group = getRootProps();
-
   return (
     <Flex w="full" alignItems="center" justifyContent="center" py="10">
       <FormContainer>
@@ -101,24 +53,21 @@ const PaymentScreen = () => {
           {/* Form */}
           <form onSubmit={submitHandler}>
             <VStack spacing="6" align="stretch">
-              {/* Payment Method Options */}
-              <FormControl as="fieldset">
-                <FormLabel as="legend" fontWeight="bold">
-                  Payment Options
-                </FormLabel>
-                <HStack {...group} spacing="4">
-                  {options.map((value) => {
-                    const radio = getRadioProps({ value });
-                    return (
-                      <RadioCard key={value} {...radio}>
-                        {value === "paypal"
-                          ? "PayPal or Credit/Debit Card"
-                          : value}
-                      </RadioCard>
-                    );
-                  })}
-                </HStack>
-              </FormControl>
+              <RadioGroup.Root
+                defaultValue={paymentMethodRadio}
+                onValueChange={setPaymentMethodRadio}
+              >
+                <VStack align="start" spacing="4">
+                  <RadioGroup.Item value="paypal">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>
+                      PayPal or Credit/Debit Card
+                    </RadioGroup.ItemText>
+                  </RadioGroup.Item>
+                  {/* Add more RadioGroup.Item elements if needed */}
+                </VStack>
+              </RadioGroup.Root>
 
               {/* Submit Button */}
               <Button
