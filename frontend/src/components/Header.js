@@ -6,9 +6,7 @@ import {
   Icon,
   Link,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Portal,
 } from "@chakra-ui/react";
 import { HiOutlineMenuAlt3, HiShoppingBag, HiUser } from "react-icons/hi";
 import { useState } from "react";
@@ -32,6 +30,7 @@ const Header = () => {
     dispatch(logout());
     navigate("/login");
   };
+
   return (
     <Flex
       as="header"
@@ -78,48 +77,68 @@ const Header = () => {
         <HeaderMenuItem icon={HiShoppingBag} label="Cart" url="/cart" />
 
         {userInfo ? (
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<IoChevronDown />}
-              _hover={{ textDecor: "none", opacity: "0.7" }}
-            >
-              {userInfo.name}
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={RouterLink} to="/profile">
-                Profile
-              </MenuItem>
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
+          <Menu.Root>
+            <Menu.Trigger asChild>
+              <Button
+                rightIcon={<IoChevronDown />}
+                _hover={{ textDecor: "none", opacity: "0.7" }}
+              >
+                {userInfo.name}
+              </Button>
+            </Menu.Trigger>
+
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  <Menu.Item value="profile" asChild>
+                    <RouterLink to="/profile">Profile</RouterLink>
+                  </Menu.Item>
+
+                  <Menu.Item value="logout" onSelect={logoutHandler}>
+                    Logout
+                  </Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
         ) : (
           <HeaderMenuItem icon={HiUser} label="Login" url="/login" />
         )}
+
         {/* Admin Menu */}
         {userInfo && userInfo.isAdmin && (
-          <Menu>
-            <MenuButton
-              ml="3"
-              as={Button}
-              fontWeight="semibold"
-              rightIcon={<IoChevronDown />}
-              _hover={{ textDecor: "none", opacity: "0.7" }}
-            >
-              Manage
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={RouterLink} to="/admin/userlist">
-                All Users
-              </MenuItem>
-              <MenuItem as={RouterLink} to="/admin/productlist">
-                All Products
-              </MenuItem>
-              <MenuItem as={RouterLink} to="/admin/orderlist">
-                All Orders
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          <Menu.Root>
+            <Menu.Trigger asChild>
+              <Button
+                ml="3"
+                fontWeight="semibold"
+                rightIcon={<IoChevronDown />}
+                _hover={{ textDecor: "none", opacity: "0.7" }}
+              >
+                Manage
+              </Button>
+            </Menu.Trigger>
+
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  <Menu.Item value="users" asChild>
+                    <RouterLink to="/admin/userlist">All Users</RouterLink>
+                  </Menu.Item>
+
+                  <Menu.Item value="products" asChild>
+                    <RouterLink to="/admin/productlist">
+                      All Products
+                    </RouterLink>
+                  </Menu.Item>
+
+                  <Menu.Item value="orders" asChild>
+                    <RouterLink to="/admin/orderlist">All Orders</RouterLink>
+                  </Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
         )}
       </Box>
     </Flex>
