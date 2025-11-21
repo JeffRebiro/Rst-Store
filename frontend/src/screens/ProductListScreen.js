@@ -33,13 +33,13 @@ import { createProduct, deleteProduct, listProducts } from "../actions/productAc
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
-import { useTheme } from "next-themes";
+import { useTheme as useNextTheme } from "next-themes";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isLight = theme?.resolvedTheme === "light";
+  const { resolvedTheme } = useNextTheme();
+  const isLight = resolvedTheme === "light";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
@@ -162,10 +162,22 @@ const ProductListScreen = () => {
                       <Td>{product.brand}</Td>
                       <Td>
                         <Flex gap={2} justify="flex-end">
-                          <Button as={RouterLink} to={`/admin/product/${product._id}/edit`} colorScheme="teal" size="sm" variant="outline" leftIcon={<IoPencilSharp />}>
+                          <Button
+                            as={RouterLink}
+                            to={`/admin/product/${product._id}/edit`}
+                            colorScheme="teal"
+                            size="sm"
+                            variant="outline"
+                            leftIcon={<IoPencilSharp />}
+                          >
                             Edit
                           </Button>
-                          <Button colorScheme="red" size="sm" onClick={() => deleteHandler(product._id)} leftIcon={<IoTrashBinSharp />}>
+                          <Button
+                            colorScheme="red"
+                            size="sm"
+                            onClick={() => deleteHandler(product._id)}
+                            leftIcon={<IoTrashBinSharp />}
+                          >
                             Delete
                           </Button>
                         </Flex>
@@ -182,10 +194,22 @@ const ProductListScreen = () => {
                   <Flex justifyContent="space-between" alignItems="center" mb={2}>
                     <Text fontSize="sm" fontWeight="bold" color="gray.600">ID: {product._id}</Text>
                     <Flex gap={2} direction="column">
-                      <Button as={RouterLink} to={`/admin/product/${product._id}/edit`} colorScheme="teal" size="sm" variant="outline" leftIcon={<IoPencilSharp />}>
+                      <Button
+                        as={RouterLink}
+                        to={`/admin/product/${product._id}/edit`}
+                        colorScheme="teal"
+                        size="sm"
+                        variant="outline"
+                        leftIcon={<IoPencilSharp />}
+                      >
                         Edit
                       </Button>
-                      <Button colorScheme="red" size="sm" onClick={() => deleteHandler(product._id)} leftIcon={<IoTrashBinSharp />}>
+                      <Button
+                        colorScheme="red"
+                        size="sm"
+                        onClick={() => deleteHandler(product._id)}
+                        leftIcon={<IoTrashBinSharp />}
+                      >
                         Delete
                       </Button>
                     </Flex>

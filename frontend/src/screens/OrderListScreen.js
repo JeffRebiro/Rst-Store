@@ -8,12 +8,12 @@ import {
   SimpleGrid,
   Text,
   Stack,
-  useTheme,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { HiOutlineClipboardList } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useTheme as useNextTheme } from 'next-themes';
 import { listOrders } from '../actions/orderActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -21,16 +21,14 @@ import Message from '../components/Message';
 const OrderListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const isLight = theme === 'light';
 
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  // Get current theme (light or dark)
-  const theme = useTheme();
-  const isLight = theme?.colorMode === 'light';
 
   const cardBg = isLight ? 'white' : 'gray.800';
   const cardHoverBg = isLight ? 'gray.50' : 'gray.700';
@@ -58,12 +56,7 @@ const OrderListScreen = () => {
       ) : error ? (
         <Message type="error">{error}</Message>
       ) : (
-        <Box
-          bg={containerBg}
-          p={{ base: 2, md: 5 }}
-          rounded="lg"
-          mx={{ base: 2, md: 10 }}
-        >
+        <Box bg={containerBg} p={{ base: 2, md: 5 }} rounded="lg" mx={{ base: 2, md: 10 }}>
           <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={5}>
             {orders.map((order) => (
               <Box

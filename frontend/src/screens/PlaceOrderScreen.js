@@ -8,11 +8,11 @@ import {
   Link,
   Text,
   Divider,
-  useTheme,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useTheme as useNextTheme } from "next-themes";
 
 import { createOrder } from "../actions/orderActions";
 import CheckoutSteps from "../components/CheckoutSteps";
@@ -21,8 +21,8 @@ import Message from "../components/Message";
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const theme = useTheme();
-  const isLight = theme?.colorMode === "light";
+  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const isLight = theme === "light";
 
   const cart = useSelector((state) => state.cart);
 
@@ -70,7 +70,7 @@ const PlaceOrderScreen = () => {
         {/* Column 1 - Order Details */}
         <Flex direction="column">
           {/* Shipping */}
-          <Box borderBottom="1px solid" py="6" borderColor="gray.300">
+          <Box borderBottom="1px solid" py="6" borderColor={borderColor}>
             <Heading as="h2" mb="4" fontSize="2xl" fontWeight="bold">
               Shipping
             </Heading>
@@ -82,7 +82,7 @@ const PlaceOrderScreen = () => {
           </Box>
 
           {/* Payment */}
-          <Box borderBottom="1px solid" py="6" borderColor="gray.300">
+          <Box borderBottom="1px solid" py="6" borderColor={borderColor}>
             <Heading as="h2" mb="4" fontSize="2xl" fontWeight="bold">
               Payment Method
             </Heading>
@@ -92,7 +92,7 @@ const PlaceOrderScreen = () => {
           </Box>
 
           {/* Order Items */}
-          <Box borderBottom="1px solid" py="6" borderColor="gray.300">
+          <Box borderBottom="1px solid" py="6" borderColor={borderColor}>
             <Heading as="h2" mb="4" fontSize="2xl" fontWeight="bold">
               Order Items
             </Heading>

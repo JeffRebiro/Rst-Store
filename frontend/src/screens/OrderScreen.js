@@ -9,12 +9,12 @@ import {
   Text,
   VStack,
   Divider,
-  useTheme,
 } from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useParams } from "react-router-dom";
+import { useTheme as useNextTheme } from "next-themes"; // <- next-themes
 
 import { deliverOrder, getOrderDetails, payOrder } from "../actions/orderActions";
 import Loader from "../components/Loader";
@@ -24,6 +24,11 @@ import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from "../constants/orderConstant
 const OrderScreen = () => {
   const dispatch = useDispatch();
   const { id: orderId } = useParams();
+
+  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const isLight = theme === "light";
+
+  const cardBg = isLight ? "white" : "gray.700";
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
@@ -37,11 +42,6 @@ const OrderScreen = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const theme = useTheme();
-  const isLight = theme?.colorMode === "light";
-
-  const cardBg = isLight ? "white" : "gray.700";
-
   useEffect(() => {
     dispatch({ type: ORDER_PAY_RESET });
     dispatch({ type: ORDER_DELIVER_RESET });
@@ -52,7 +52,10 @@ const OrderScreen = () => {
   }, [dispatch, orderId, order, successPay, successDeliver]);
 
   if (!loading && order) {
-    order.itemsPrice = order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+    order.itemsPrice = order.orderItems.reduce(
+      (acc, item) => acc + item.price * item.qty,
+      0
+    );
   }
 
   const successPaymentHandler = (paymentResult) => {
@@ -129,17 +132,17 @@ const OrderScreen = () => {
         {/* Right Side */}
         <Box bg={cardBg} p="8" shadow="lg" rounded="lg" borderWidth="1px">
           <Heading fontSize="2xl" mb="6" textAlign="center">Order Summary</Heading>
-          <VStack spacing="4" divider={<Divider />}>
-            <Flex justify="space-between" w="full"><Text>Items</Text><Text fontWeight="bold">${order.itemsPrice}</Text></Flex>
-            <Flex justify="space-between" w="full"><Text>Shipping</Text><Text fontWeight="bold">${order.shippingPrice}</Text></Flex>
-            <Flex justify="space-between" w="full"><Text>Tax</Text><Text fontWeight="bold">${order.taxPrice}</Text></Flex>
-            <Flex justify="space-between" w="full"><Text>Total</Text><Text fontWeight="bold" fontSize="xl">${order.totalPrice}</Text></Flex>
+          <VStack spacing="4" divider={<Divider />} align="stretch">
+            <Flex justify="space-between"><Text>Items</Text><Text fontWeight="bold">${order.itemsPrice}</Text></Flex>
+            <Flex justify="space-between"><Text>Shipping</Text><Text fontWeight="bold">${order.shippingPrice}</Text></Flex>
+            <Flex justify="space-between"><Text>Tax</Text><Text fontWeight="bold">${order.taxPrice}</Text></Flex>
+            <Flex justify="space-between"><Text>Total</Text><Text fontWeight="bold" fontSize="xl">${order.totalPrice}</Text></Flex>
           </VStack>
 
           {!order.isPaid && (
             <Box mt="8">
               {loadingPay ? <Loader /> : (
-                <PayPalScriptProvider options={{"client-id": "AbCWawRqgTtLVVCXOZojr41rc7ooz60ClZWU8y8UynDk3KmHn5syU0o41cyMi5iyh_E3brYWPGuLOFfr", components: "buttons"}}>
+                <PayPalScriptProvider options={{"client-id": "YOUR_CLIENT_ID_HERE", components: "buttons"}}>
                   <PayPalButtons
                     createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
                     onApprove={(data, actions) => actions.order.capture().then((details) => {

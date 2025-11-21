@@ -6,12 +6,12 @@ import {
   Box,
   RadioGroup,
   Radio,
-  useTheme,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTheme as useNextTheme } from "next-themes";
 
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
@@ -31,8 +31,8 @@ const PaymentScreen = () => {
     paymentMethod || "paypal"
   );
 
-  const theme = useTheme();
-  const isLight = theme?.colorMode === "light";
+  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const isLight = theme === "light";
   const boxBg = isLight ? "white" : "gray.700";
 
   useEffect(() => {
