@@ -4,8 +4,6 @@ import {
   Heading,
   VStack,
   Box,
-  RadioGroup,
-  Radio,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -13,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTheme as useNextTheme } from "next-themes";
 
+import * as RadioGroup from "@radix-ui/react-radio-group"; // <- Radix compound component
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 import FormContainer from "../components/FormContainer";
@@ -31,7 +30,7 @@ const PaymentScreen = () => {
     paymentMethod || "paypal"
   );
 
-  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const { theme } = useNextTheme(); 
   const isLight = theme === "light";
   const boxBg = isLight ? "white" : "gray.700";
 
@@ -61,15 +60,20 @@ const PaymentScreen = () => {
           {/* Form */}
           <form onSubmit={submitHandler}>
             <VStack spacing="6" align="stretch">
-              {/* Payment Options */}
-              <RadioGroup value={paymentMethodRadio} onChange={setPaymentMethodRadio}>
+              {/* Payment Options using compound components */}
+              <RadioGroup.Root
+                value={paymentMethodRadio}
+                onValueChange={setPaymentMethodRadio}
+              >
                 <VStack align="start" spacing="4">
-                  <Radio value="paypal" size="lg">
-                    PayPal or Credit/Debit Card
-                  </Radio>
-                  {/* Add more options if needed */}
+                  <RadioGroup.Item value="paypal">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>PayPal or Credit/Debit Card</RadioGroup.ItemText>
+                  </RadioGroup.Item>
+                  {/* Add more payment options here as needed */}
                 </VStack>
-              </RadioGroup>
+              </RadioGroup.Root>
 
               {/* Submit */}
               <Button
