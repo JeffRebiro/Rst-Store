@@ -13,9 +13,12 @@ import {
   Tr,
   Th,
   Td,
+  FieldRoot,
+  FieldLabel,
+  FieldErrorText,
 } from "@chakra-ui/react";
 
-import * as Field from "@chakra-ui/react";
+
 
 import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";

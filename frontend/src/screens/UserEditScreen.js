@@ -6,8 +6,11 @@ import {
   Input,
   Link,
   Spacer,
+  FieldRoot,
+  FieldLabel,
+  FieldErrorText,
 } from "@chakra-ui/react";
-import * as Field from "@chakra-ui/react";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
