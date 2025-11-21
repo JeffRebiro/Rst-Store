@@ -5,9 +5,6 @@ import {
   Grid,
   Heading,
   Icon,
-  Input,
-  InputGroup,
-  InputRightElement,
   Table,
   Tbody,
   Td,
@@ -25,6 +22,9 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@chakra-ui/react";
+
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
+
 import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -138,7 +138,15 @@ const ProductListScreen = () => {
       ) : error ? (
         <Message type="error">{error}</Message>
       ) : (
-        <Box bgColor={bgColor} rounded="lg" shadow="lg" px={{ base: 2, md: 5 }} py={{ base: 2, md: 5 }} mt="4" mx={{ base: 2, md: 5 }}>
+        <Box
+          bgColor={bgColor}
+          rounded="lg"
+          shadow="lg"
+          px={{ base: 2, md: 5 }}
+          py={{ base: 2, md: 5 }}
+          mt="4"
+          mx={{ base: 2, md: 5 }}
+        >
           {!isMobile ? (
             <Box overflowX="auto">
               <Table variant="striped" size="sm">
@@ -190,9 +198,19 @@ const ProductListScreen = () => {
           ) : (
             <Stack spacing={4}>
               {filteredProducts.map((product) => (
-                <Box key={product._id} borderWidth="1px" borderRadius="lg" overflow="hidden" shadow="sm" p={4} bgColor={bgColor}>
+                <Box
+                  key={product._id}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  shadow="sm"
+                  p={4}
+                  bgColor={bgColor}
+                >
                   <Flex justifyContent="space-between" alignItems="center" mb={2}>
-                    <Text fontSize="sm" fontWeight="bold" color="gray.600">ID: {product._id}</Text>
+                    <Text fontSize="sm" fontWeight="bold" color="gray.600">
+                      ID: {product._id}
+                    </Text>
                     <Flex gap={2} direction="column">
                       <Button
                         as={RouterLink}
@@ -214,10 +232,18 @@ const ProductListScreen = () => {
                       </Button>
                     </Flex>
                   </Flex>
-                  <Text fontWeight="medium" color="gray.700">{product.name}</Text>
-                  <Text fontSize="sm" color="gray.600">Price: ${product.price.toFixed(2)}</Text>
-                  <Text fontSize="sm" color="gray.600">Category: {product.category}</Text>
-                  <Text fontSize="sm" color="gray.600">Brand: {product.brand}</Text>
+                  <Text fontWeight="medium" color="gray.700">
+                    {product.name}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    Price: ${product.price.toFixed(2)}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    Category: {product.category}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    Brand: {product.brand}
+                  </Text>
                 </Box>
               ))}
             </Stack>
