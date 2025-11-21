@@ -5,6 +5,9 @@ import {
   Grid,
   Heading,
   Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
   Table,
   Tbody,
   Td,
@@ -22,8 +25,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@chakra-ui/react";
-
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 
 import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
