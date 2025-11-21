@@ -78,7 +78,7 @@ const ProductScreen = () => {
         <Loader />
       ) : error ? (
         <Message type="error">{error}</Message>
-      ) : (
+      ) : product ? (
         <>
           <Grid
             templateColumns={{ sm: "1fr", md: "2fr 1fr" }}
@@ -91,8 +91,8 @@ const ProductScreen = () => {
           >
             {/* Product Image */}
             <Image
-              src={product.image}
-              alt={product.name}
+              src={product?.image}
+              alt={product?.name}
               borderRadius="md"
               objectFit="cover"
               boxShadow="sm"
@@ -102,22 +102,22 @@ const ProductScreen = () => {
             <Flex direction="column" justifyContent="space-between">
               <Box>
                 <Heading as="h1" fontSize="3xl" mb="4" color="teal.600">
-                  {product.name}
+                  {product?.name}
                 </Heading>
                 <Text fontSize="lg" color="gray.500" mb="4">
-                  {product.brand}
+                  {product?.brand}
                 </Text>
                 <Rating
-                  value={product.rating}
+                  value={product?.rating}
                   color="yellow.500"
-                  text={`${product.numReviews} reviews`}
+                  text={`${product?.numReviews || 0} reviews`}
                   mb="4"
                 />
                 <Text fontSize="xl" fontWeight="bold" color="teal.800">
-                  ${product.price}
+                  ${product?.price}
                 </Text>
                 <Text mt="4" color="gray.700">
-                  {product.description}
+                  {product?.description}
                 </Text>
               </Box>
 
@@ -125,23 +125,23 @@ const ProductScreen = () => {
               <Box mt="8" p="6" bg="gray.50" borderRadius="lg" boxShadow="sm">
                 <Flex justifyContent="space-between" mb="4">
                   <Text>Price:</Text>
-                  <Text fontWeight="bold">${product.price}</Text>
+                  <Text fontWeight="bold">${product?.price}</Text>
                 </Flex>
                 <Flex justifyContent="space-between" mb="4">
                   <Text>Status:</Text>
                   <Text fontWeight="bold">
-                    {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
+                    {product?.countInStock > 0 ? "In Stock" : "Out of Stock"}
                   </Text>
                 </Flex>
-                {product.countInStock > 0 && (
+                {product?.countInStock > 0 && (
                   <Flex justifyContent="space-between" mb="4">
                     <Text>Qty:</Text>
                     <Select
                       value={qty}
-                      onChange={(e) => setQty(e.target.value)}
+                      onChange={(e) => setQty(Number(e.target.value))}
                       width="30%"
                     >
-                      {[...Array(product.countInStock).keys()].map((i) => (
+                      {[...Array(product?.countInStock).keys()].map((i) => (
                         <option value={i + 1} key={i + 1}>
                           {i + 1}
                         </option>
@@ -152,7 +152,7 @@ const ProductScreen = () => {
                 <Button
                   width="100%"
                   colorScheme="teal"
-                  isDisabled={product.countInStock === 0}
+                  isDisabled={product?.countInStock === 0}
                   onClick={addToCartHandler}
                 >
                   Add to Cart
@@ -167,10 +167,10 @@ const ProductScreen = () => {
               Write a Review
             </Heading>
 
-            {product.reviews.length === 0 ? (
+            {product?.reviews?.length === 0 ? (
               <Message>No Reviews</Message>
             ) : (
-              product.reviews.map((review) => (
+              product?.reviews?.map((review) => (
                 <Box
                   key={review._id}
                   p="4"
@@ -200,7 +200,7 @@ const ProductScreen = () => {
                   <Select
                     placeholder="Select Option"
                     value={rating}
-                    onChange={(e) => setRating(e.target.value)}
+                    onChange={(e) => setRating(Number(e.target.value))}
                   >
                     <option value="1">1 - Poor</option>
                     <option value="2">2 - Okay</option>
