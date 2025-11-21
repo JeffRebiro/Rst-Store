@@ -1,13 +1,12 @@
 import {
   Flex,
   Button,
-  FormControl,
-  FormLabel,
   Heading,
   Input,
   Link,
   Spacer,
   Text,
+  Field,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -20,6 +19,7 @@ import {
 import { login } from "../actions/userActions";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
+
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,6 +38,7 @@ const LoginScreen = () => {
       navigate(redirect);
     }
   }, [navigate, userInfo, redirect]);
+
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(login(email, password));
@@ -53,29 +54,33 @@ const LoginScreen = () => {
         {error && <Message type="error">Invalid username or password</Message>}
 
         <form onSubmit={submitHandler}>
-          <FormControl id="email">
-            <FormLabel htmlFor="email">Email address</FormLabel>
+          {/* Email */}
+          <Field.Root>
+            <Field.Label>Email address</Field.Label>
             <Input
-              id="email"
               type="email"
               placeholder="Enter your email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </FormControl>
+            {/* Optional error text if you want to add validation later */}
+            {/* <Field.ErrorText>Email is required</Field.ErrorText> */}
+          </Field.Root>
 
           <Spacer h="3" />
 
-          <FormControl id="password">
-            <FormLabel htmlFor="password">Password</FormLabel>
+          {/* Password */}
+          <Field.Root>
+            <Field.Label>Password</Field.Label>
             <Input
-              id="password"
               type="password"
               placeholder="************"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </FormControl>
+            {/* Optional */}
+            {/* <Field.ErrorText>Password is required</Field.ErrorText> */}
+          </Field.Root>
 
           <Button type="submit" colorScheme="teal" mt="4" isLoading={loading}>
             Login

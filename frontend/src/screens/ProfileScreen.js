@@ -1,8 +1,7 @@
 import {
+  Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
   Grid,
   Heading,
   Icon,
@@ -14,6 +13,7 @@ import {
   Th,
   Thead,
   Tr,
+  Field,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";
@@ -69,7 +69,6 @@ const ProfileScreen = () => {
       setMessage("Passwords do not match");
     } else {
       dispatch(updateUserProfile({ id: user._id, name, email, password }));
-      // window.location.reload();
     }
 
     dispatch({ type: USER_DETAILS_RESET });
@@ -87,55 +86,51 @@ const ProfileScreen = () => {
           {message && <Message type="error">{message}</Message>}
 
           <form onSubmit={submitHandler}>
-            <FormControl id="name">
-              <FormLabel htmlFor="name">Your Name</FormLabel>
+            <Field.Root>
+              <Field.Label>Your Name</Field.Label>
               <Input
-                id="name"
                 type="text"
                 placeholder="Your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-            </FormControl>
+            </Field.Root>
 
             <Spacer h="3" />
 
-            <FormControl id="email">
-              <FormLabel htmlFor="email">Email address</FormLabel>
+            <Field.Root>
+              <Field.Label>Email address</Field.Label>
               <Input
-                id="email"
                 type="email"
                 placeholder="username@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </FormControl>
+            </Field.Root>
 
             <Spacer h="3" />
 
-            <FormControl id="password">
-              <FormLabel htmlFor="password">Password</FormLabel>
+            <Field.Root>
+              <Field.Label>Password</Field.Label>
               <Input
-                id="password"
                 type="password"
                 placeholder="************"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </FormControl>
+            </Field.Root>
 
             <Spacer h="3" />
 
-            <FormControl id="confirmPassword">
-              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+            <Field.Root>
+              <Field.Label>Confirm Password</Field.Label>
               <Input
-                id="confirmPassword"
                 type="password"
                 placeholder="************"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-            </FormControl>
+            </Field.Root>
 
             <Button type="submit" colorScheme="teal" mt="4" isLoading={loading}>
               Update
@@ -177,14 +172,14 @@ const ProfileScreen = () => {
                       new Date(order.paidAt).toDateString()
                     ) : (
                       <Icon as={IoWarning} color="red" />
-                    )}{" "}
+                    )}
                   </Td>
                   <Td>
                     {order.isDelivered ? (
                       new Date(order.deliveredAt).toDateString()
                     ) : (
                       <Icon as={IoWarning} color="red" />
-                    )}{" "}
+                    )}
                   </Td>
                   <Td>
                     <Button
