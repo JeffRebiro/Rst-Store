@@ -2,25 +2,16 @@ import {
   Box,
   Button,
   Flex,
-  Grid,
   Heading,
   Icon,
   Text,
   Stack,
   useBreakpointValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
-
-
+import * as Dialog from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
@@ -31,6 +22,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 import { useTheme as useNextTheme } from "next-themes";
+import { useDisclosure } from "@chakra-ui/react";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
@@ -248,22 +240,33 @@ const ProductListScreen = () => {
         </Box>
       )}
 
-      {/* Confirm Delete Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirm Delete</ModalHeader>
-          <ModalBody>Are you sure you want to delete this product?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={confirmDeleteHandler}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {/* Confirm Delete Dialog */}
+      <Dialog.Root
+        open={isOpen}
+        onOpenChange={(e) => !e.open && onClose()}
+        placement="center"
+        closeOnInteractOutside={true}
+      >
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>Confirm Delete</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              Are you sure you want to delete this product?
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button colorScheme="red" mr={3} onClick={confirmDeleteHandler}>
+                Delete
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Cancel
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </>
   );
 };
