@@ -228,7 +228,7 @@ const ProductScreen = () => {
             )}
           </Box>
         </>
-      )}
+      ): null}
     </>
   );
 };
