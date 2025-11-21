@@ -7,7 +7,7 @@ import {
   Image,
   Link,
   Text,
-  Divider,
+  Separator, // <-- Updated
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -159,21 +159,21 @@ const PlaceOrderScreen = () => {
                 ${cart.itemsPrice}
               </Text>
             </Flex>
-            <Divider />
+            <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Shipping</Text>
               <Text fontWeight="bold" fontSize="lg">
                 ${cart.shippingPrice}
               </Text>
             </Flex>
-            <Divider />
+            <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Tax</Text>
               <Text fontWeight="bold" fontSize="lg">
                 ${cart.taxPrice}
               </Text>
             </Flex>
-            <Divider />
+            <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Total</Text>
               <Text fontWeight="bold" fontSize="lg">

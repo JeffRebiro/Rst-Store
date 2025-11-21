@@ -8,13 +8,13 @@ import {
   Link,
   Text,
   VStack,
-  Divider,
+  Separator, // <- updated
 } from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { useTheme as useNextTheme } from "next-themes"; // <- next-themes
+import { useTheme as useNextTheme } from "next-themes";
 
 import { deliverOrder, getOrderDetails, payOrder } from "../actions/orderActions";
 import Loader from "../components/Loader";
@@ -25,9 +25,8 @@ const OrderScreen = () => {
   const dispatch = useDispatch();
   const { id: orderId } = useParams();
 
-  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const { theme } = useNextTheme(); 
   const isLight = theme === "light";
-
   const cardBg = isLight ? "white" : "gray.700";
 
   const orderDetails = useSelector((state) => state.orderDetails);
@@ -132,7 +131,7 @@ const OrderScreen = () => {
         {/* Right Side */}
         <Box bg={cardBg} p="8" shadow="lg" rounded="lg" borderWidth="1px">
           <Heading fontSize="2xl" mb="6" textAlign="center">Order Summary</Heading>
-          <VStack spacing="4" divider={<Divider />} align="stretch">
+          <VStack spacing="4" divider={<Separator />} align="stretch">
             <Flex justify="space-between"><Text>Items</Text><Text fontWeight="bold">${order.itemsPrice}</Text></Flex>
             <Flex justify="space-between"><Text>Shipping</Text><Text fontWeight="bold">${order.shippingPrice}</Text></Flex>
             <Flex justify="space-between"><Text>Tax</Text><Text fontWeight="bold">${order.taxPrice}</Text></Flex>
