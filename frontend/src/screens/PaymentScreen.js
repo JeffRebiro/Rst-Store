@@ -4,7 +4,6 @@ import {
   Heading,
   VStack,
   Box,
-  Radio,
   RadioGroup,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -60,14 +59,20 @@ const PaymentScreen = () => {
 
           <form onSubmit={submitHandler}>
             <VStack spacing="6" align="stretch">
-              <RadioGroup
+              <RadioGroup.Root
                 value={paymentMethodRadio}
-                onChange={setPaymentMethodRadio}
+                onValueChange={setPaymentMethodRadio}
               >
                 <VStack align="start" spacing="4">
-                  <Radio value="paypal">PayPal or Credit/Debit Card</Radio>
+                  <RadioGroup.Item value="paypal">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>
+                      PayPal or Credit/Debit Card
+                    </RadioGroup.ItemText>
+                  </RadioGroup.Item>
                 </VStack>
-              </RadioGroup>
+              </RadioGroup.Root>
 
               <Button
                 type="submit"
