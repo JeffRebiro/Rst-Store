@@ -6,7 +6,7 @@ import { ThemeProvider } from "next-themes";
 
 import App from "./App";
 import store from "./store";
-import { Provider as UIProvider } from "../components/ui/provider"; // your Chakra wrapper
+import { Provider as UIProvider } from "./components/ui/provider"; // your Chakra wrapper
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
