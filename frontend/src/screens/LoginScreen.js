@@ -57,8 +57,8 @@ const LoginScreen = () => {
 
         <form onSubmit={submitHandler}>
           {/* Email */}
-          <Field.Root>
-            <Field.Label>Email address</Field.Label>
+          <FieldRoot>
+            <FieldLabel>Email address</FieldLabel>
             <Input
               type="email"
               placeholder="Enter your email Address"
@@ -66,14 +66,14 @@ const LoginScreen = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             {/* Optional error text if you want to add validation later */}
-            {/* <Field.ErrorText>Email is required</Field.ErrorText> */}
-          </Field.Root>
+            {/* <FieldErrorText>Email is required</FieldErrorText> */}
+          </FieldRoot>
 
           <Spacer h="3" />
 
           {/* Password */}
-          <Field.Root>
-            <Field.Label>Password</Field.Label>
+          <FieldRoot>
+            <FieldLabel>Password</FieldLabel>
             <Input
               type="password"
               placeholder="************"
@@ -81,8 +81,8 @@ const LoginScreen = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             {/* Optional */}
-            {/* <Field.ErrorText>Password is required</Field.ErrorText> */}
-          </Field.Root>
+            {/* <FieldErrorText>Password is required</FieldErrorText> */}
+          </FieldRoot>
 
           <Button type="submit" colorScheme="teal" mt="4" isLoading={loading}>
             Login

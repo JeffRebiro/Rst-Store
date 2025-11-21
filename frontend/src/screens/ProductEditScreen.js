@@ -119,32 +119,32 @@ const ProductEditScreen = () => {
           ) : (
             <form onSubmit={submitHandler}>
               {/* NAME */}
-              <Field.Root>
-                <Field.Label>Name</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Name</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* PRICE */}
-              <Field.Root>
-                <Field.Label>Price</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Price</FieldLabel>
                 <Input
                   type="number"
                   placeholder="Enter price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* IMAGE */}
-              <Field.Root>
-                <Field.Label>Image</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Image</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter image url"
@@ -152,55 +152,55 @@ const ProductEditScreen = () => {
                   onChange={(e) => setImage(e.target.value)}
                 />
                 <Input type="file" onChange={uploadFileHandler} />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* DESCRIPTION */}
-              <Field.Root>
-                <Field.Label>Description</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Description</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* BRAND */}
-              <Field.Root>
-                <Field.Label>Brand</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Brand</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter brand"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* CATEGORY */}
-              <Field.Root>
-                <Field.Label>Category</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Category</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               {/* COUNT IN STOCK */}
-              <Field.Root>
-                <Field.Label>Count In Stock</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Count In Stock</FieldLabel>
                 <Input
                   type="number"
                   placeholder="Product in stock"
                   value={countInStock}
                   onChange={(e) => setCountInStock(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               <Button type="submit" isLoading={loading} colorScheme="teal" mt="4">

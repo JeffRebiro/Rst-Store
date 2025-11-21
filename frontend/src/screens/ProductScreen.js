@@ -195,8 +195,8 @@ const ProductScreen = () => {
 
             {userInfo ? (
               <form onSubmit={submitHandler}>
-                <Field.Root mb="4">
-                  <Field.Label>Rating</Field.Label>
+                <FieldRoot mb="4">
+                  <FieldLabel>Rating</FieldLabel>
                   <Select
                     placeholder="Select Option"
                     value={rating}
@@ -208,16 +208,16 @@ const ProductScreen = () => {
                     <option value="4">4 - Very Good</option>
                     <option value="5">5 - Excellent</option>
                   </Select>
-                </Field.Root>
+                </FieldRoot>
 
-                <Field.Root mb="4">
-                  <Field.Label>Comment</Field.Label>
+                <FieldRoot mb="4">
+                  <FieldLabel>Comment</FieldLabel>
                   <Textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here..."
                   />
-                </Field.Root>
+                </FieldRoot>
 
                 <Button type="submit" colorScheme="teal">
                   Submit Review

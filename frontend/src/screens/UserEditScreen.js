@@ -80,30 +80,30 @@ const UserEditScreen = () => {
             <Message type="error">{error}</Message>
           ) : (
             <form onSubmit={submitHandler}>
-              <Field.Root>
-                <Field.Label>Name</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Name</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
-              <Field.Root>
-                <Field.Label>Email Address</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Email Address</FieldLabel>
                 <Input
                   type="text"
                   placeholder="Enter email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
-              <Field.Root>
-                <Field.Label>Is Admin?</Field.Label>
+              <FieldRoot>
+                <FieldLabel>Is Admin?</FieldLabel>
                 <Checkbox
                   size="lg"
                   colorScheme="teal"
@@ -112,7 +112,7 @@ const UserEditScreen = () => {
                 >
                   Is Admin?
                 </Checkbox>
-              </Field.Root>
+              </FieldRoot>
               <Spacer h="3" />
 
               <Button type="submit" isLoading={loading} colorScheme="teal" mt="4">

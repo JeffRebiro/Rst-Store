@@ -14,9 +14,6 @@ import {
 
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 
-
-
-
 import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,51 +85,51 @@ const ProfileScreen = () => {
           {message && <Message type="error">{message}</Message>}
 
           <form onSubmit={submitHandler}>
-            <Field.Root>
-              <Field.Label>Your Name</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Your Name</FieldLabel>
               <Input
                 type="text"
                 placeholder="Your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-            </Field.Root>
+            </FieldRoot>
 
             <Spacer h="3" />
 
-            <Field.Root>
-              <Field.Label>Email address</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Email address</FieldLabel>
               <Input
                 type="email"
                 placeholder="username@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </Field.Root>
+            </FieldRoot>
 
             <Spacer h="3" />
 
-            <Field.Root>
-              <Field.Label>Password</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Password</FieldLabel>
               <Input
                 type="password"
                 placeholder="************"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </Field.Root>
+            </FieldRoot>
 
             <Spacer h="3" />
 
-            <Field.Root>
-              <Field.Label>Confirm Password</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Confirm Password</FieldLabel>
               <Input
                 type="password"
                 placeholder="************"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-            </Field.Root>
+            </FieldRoot>
 
             <Button type="submit" colorScheme="teal" mt="4" isLoading={loading}>
               Update

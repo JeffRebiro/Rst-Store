@@ -64,8 +64,8 @@ const ShippingScreen = () => {
         <form onSubmit={submitHandler}>
           <VStack spacing="6" align="stretch">
             {/* Address Field */}
-            <Field.Root>
-              <Field.Label>Address</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Address</FieldLabel>
               <Input
                 type="text"
                 placeholder="Enter your address"
@@ -73,11 +73,11 @@ const ShippingScreen = () => {
                 onChange={(e) => setAddress(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </FieldRoot>
 
             {/* City Field */}
-            <Field.Root>
-              <Field.Label>City</Field.Label>
+            <FieldRoot>
+              <FieldLabel>City</FieldLabel>
               <Input
                 type="text"
                 placeholder="Enter your city"
@@ -85,11 +85,11 @@ const ShippingScreen = () => {
                 onChange={(e) => setCity(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </FieldRoot>
 
             {/* Postal Code Field */}
-            <Field.Root>
-              <Field.Label>Postal Code</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Postal Code</FieldLabel>
               <Input
                 type="text"
                 placeholder="Enter your postal code"
@@ -97,11 +97,11 @@ const ShippingScreen = () => {
                 onChange={(e) => setPostalCode(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </FieldRoot>
 
             {/* Country Field */}
-            <Field.Root>
-              <Field.Label>Country</Field.Label>
+            <FieldRoot>
+              <FieldLabel>Country</FieldLabel>
               <Select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
@@ -114,7 +114,7 @@ const ShippingScreen = () => {
                   </option>
                 ))}
               </Select>
-            </Field.Root>
+            </FieldRoot>
 
             {/* Submit Button */}
             <Button
