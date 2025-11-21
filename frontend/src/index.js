@@ -1,28 +1,22 @@
+// index.js
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { Provider as ReduxProvider } from "react-redux";
 import { ThemeProvider } from "next-themes";
 
 import App from "./App";
 import store from "./store";
-
-const theme = extendTheme({
-  config: {
-    initialColorMode: "light",
-    useSystemColorMode: false,
-  },
-});
+import { Provider as UIProvider } from "@/components/ui/provider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <ThemeProvider attribute="class" defaultTheme="light">
-        <ChakraProvider theme={theme}>
+        <UIProvider>
           <App />
-        </ChakraProvider>
+        </UIProvider>
       </ThemeProvider>
-    </Provider>
+    </ReduxProvider>
   </React.StrictMode>
 );
