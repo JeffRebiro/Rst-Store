@@ -8,13 +8,15 @@ import {
   Input,
   Spacer,
   Table,
-  Tbody,
-  Td,
-  Th,
   Thead,
+  Tbody,
   Tr,
-  Field,
+  Th,
+  Td,
 } from "@chakra-ui/react";
+
+import * as Field from "@chakra-ui/react";
+
 import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";

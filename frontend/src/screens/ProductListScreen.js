@@ -5,12 +5,6 @@ import {
   Grid,
   Heading,
   Icon,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   Text,
   Stack,
   useBreakpointValue,
@@ -24,6 +18,8 @@ import {
 } from "@chakra-ui/react";
 
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
+
 
 
 import { useEffect, useState } from "react";

@@ -4,31 +4,28 @@ import {
   Flex,
   Heading,
   Icon,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   Text,
   Tooltip,
   Stack,
   useBreakpointValue,
-  Separator, // <- updated
   Badge,
-} from '@chakra-ui/react';
-import { useEffect } from 'react';
+} from "@chakra-ui/react";
+
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Separator } from "@chakra-ui/react";
+
+import { useEffect } from "react";
 import {
   IoCheckmarkCircleSharp,
   IoCloseCircleSharp,
   IoPencilSharp,
   IoTrashBinSharp,
-} from 'react-icons/io5';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { deleteUser, listUsers } from '../actions/userActions';
-import Loader from '../components/Loader';
-import Message from '../components/Message';
+} from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { deleteUser, listUsers } from "../actions/userActions";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 const UserListScreen = () => {
   const dispatch = useDispatch();
@@ -44,12 +41,12 @@ const UserListScreen = () => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listUsers());
     } else {
-      navigate('/login');
+      navigate("/login");
     }
   }, [dispatch, navigate, userInfo, successDelete]);
 
   const deleteHandler = (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       dispatch(deleteUser(id));
     }
   };
@@ -58,7 +55,7 @@ const UserListScreen = () => {
     <>
       <Heading
         as="h1"
-        fontSize={{ base: '2xl', md: '3xl' }}
+        fontSize={{ base: "2xl", md: "3xl" }}
         fontWeight="bold"
         mb="6"
         color="gray.700"
@@ -71,7 +68,7 @@ const UserListScreen = () => {
       ) : error ? (
         <Message type="error">{error}</Message>
       ) : (
-        <Box bg="white" rounded="lg" shadow="md" p={{ base: '4', md: '6' }}>
+        <Box bg="white" rounded="lg" shadow="md" p={{ base: "4", md: "6" }}>
           {!isMobile ? (
             <Table variant="simple" size="md">
               <Thead bg="gray.100">
@@ -98,12 +95,12 @@ const UserListScreen = () => {
                     <Td textAlign="center">
                       <Badge
                         variant="solid"
-                        colorScheme={user.isAdmin ? 'green' : 'red'}
+                        colorScheme={user.isAdmin ? "green" : "red"}
                         px={3}
                         py={1}
                         borderRadius="full"
                       >
-                        {user.isAdmin ? 'Admin' : 'User'}
+                        {user.isAdmin ? "Admin" : "User"}
                       </Badge>
                     </Td>
                     <Td textAlign="center">
@@ -174,7 +171,7 @@ const UserListScreen = () => {
                     </Flex>
                   </Flex>
 
-                  <Separator mb={3} /> {/* <-- updated */}
+                  <Separator mb={3} />
 
                   <Stack spacing={1}>
                     <Text fontWeight="bold" color="gray.700">
@@ -183,8 +180,12 @@ const UserListScreen = () => {
                     <Text fontSize="sm" color="gray.600">
                       <a href={`mailto:${user.email}`}>{user.email}</a>
                     </Text>
-                    <Badge mt={2} colorScheme={user.isAdmin ? 'green' : 'red'} alignSelf="start">
-                      {user.isAdmin ? 'Admin' : 'User'}
+                    <Badge
+                      mt={2}
+                      colorScheme={user.isAdmin ? "green" : "red"}
+                      alignSelf="start"
+                    >
+                      {user.isAdmin ? "Admin" : "User"}
                     </Badge>
                   </Stack>
                 </Box>

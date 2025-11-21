@@ -6,6 +6,7 @@
   "dependencies": {
     "@chakra-ui/input": "^2.1.2",
     "@chakra-ui/react": "^3.29.0",
+    "@chakra-ui/table": "^2.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@paypal/react-paypal-js": "^7.8.3",
