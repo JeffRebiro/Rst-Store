@@ -5,8 +5,8 @@ import {
   Input,
   Link,
   Spacer,
-  Field,
 } from "@chakra-ui/react";
+import * as Field from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

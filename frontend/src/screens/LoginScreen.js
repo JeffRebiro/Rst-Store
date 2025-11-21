@@ -6,9 +6,9 @@ import {
   Link,
   Spacer,
   Text,
-  Field,
 } from "@chakra-ui/react";
 
+import * as Field from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
