@@ -66,7 +66,6 @@ const PaymentScreen = () => {
               >
                 <VStack align="start" spacing="4">
                   <Radio value="paypal">PayPal or Credit/Debit Card</Radio>
-                  {/* Add more payment options here if needed */}
                 </VStack>
               </RadioGroup>
 
