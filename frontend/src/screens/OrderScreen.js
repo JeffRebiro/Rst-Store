@@ -9,24 +9,17 @@ import {
   Text,
   VStack,
   Divider,
-  useColorModeValue,
+  useTheme,
 } from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
-import {
-  deliverOrder,
-  getOrderDetails,
-  payOrder,
-} from "../actions/orderActions";
+import { deliverOrder, getOrderDetails, payOrder } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import {
-  ORDER_DELIVER_RESET,
-  ORDER_PAY_RESET,
-} from "../constants/orderConstants";
+import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -44,8 +37,10 @@ const OrderScreen = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  // Move useColorModeValue to the top level - always call it unconditionally
-  const cardBg = useColorModeValue("white", "gray.700");
+  const theme = useTheme();
+  const isLight = theme?.colorMode === "light";
+
+  const cardBg = isLight ? "white" : "gray.700";
 
   useEffect(() => {
     dispatch({ type: ORDER_PAY_RESET });
@@ -57,10 +52,7 @@ const OrderScreen = () => {
   }, [dispatch, orderId, order, successPay, successDeliver]);
 
   if (!loading && order) {
-    order.itemsPrice = order.orderItems.reduce(
-      (acc, item) => acc + item.price * item.qty,
-      0
-    );
+    order.itemsPrice = order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
   }
 
   const successPaymentHandler = (paymentResult) => {
@@ -80,17 +72,13 @@ const OrderScreen = () => {
       <Grid templateColumns={{ base: "1fr", md: "3fr 2fr" }} gap="8">
         {/* Left Side */}
         <VStack spacing="6" align="stretch">
-          {/* Shipping Section */}
+          {/* Shipping */}
           <Box bg={cardBg} p="6" shadow="md" rounded="lg" borderWidth="1px">
-            <Heading fontSize="2xl" mb="4">
-              Shipping
-            </Heading>
+            <Heading fontSize="2xl" mb="4">Shipping</Heading>
             <Text><strong>Name:</strong> {order.user.name}</Text>
             <Text>
               <strong>Email:</strong>{" "}
-              <Link color="teal.500" href={`mailto:${order.user.email}`}>
-                {order.user.email}
-              </Link>
+              <Link color="teal.500" href={`mailto:${order.user.email}`}>{order.user.email}</Link>
             </Text>
             <Text mt="2">
               <strong>Address:</strong> {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}, {order.shippingAddress.country}
@@ -104,11 +92,9 @@ const OrderScreen = () => {
             </Box>
           </Box>
 
-          {/* Payment Section */}
+          {/* Payment */}
           <Box bg={cardBg} p="6" shadow="md" rounded="lg" borderWidth="1px">
-            <Heading fontSize="2xl" mb="4">
-              Payment Method
-            </Heading>
+            <Heading fontSize="2xl" mb="4">Payment Method</Heading>
             <Text><strong>Method:</strong> {order.paymentMethod.toUpperCase()}</Text>
             <Box mt="4">
               {order.isPaid ? (
@@ -119,11 +105,9 @@ const OrderScreen = () => {
             </Box>
           </Box>
 
-          {/* Order Items Section */}
+          {/* Order Items */}
           <Box bg={cardBg} p="6" shadow="md" rounded="lg" borderWidth="1px">
-            <Heading fontSize="2xl" mb="4">
-              Order Items
-            </Heading>
+            <Heading fontSize="2xl" mb="4">Order Items</Heading>
             {order.orderItems.length === 0 ? (
               <Message>No Order Info</Message>
             ) : (
@@ -131,21 +115,10 @@ const OrderScreen = () => {
                 {order.orderItems.map((item, idx) => (
                   <Flex key={idx} align="center" justify="space-between">
                     <Flex align="center">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        boxSize="50px"
-                        objectFit="cover"
-                        mr="4"
-                        rounded="md"
-                      />
-                      <Link as={RouterLink} to={`/products/${item.product}`} fontWeight="bold" fontSize="lg" color="teal.600">
-                        {item.name}
-                      </Link>
+                      <Image src={item.image} alt={item.name} boxSize="50px" objectFit="cover" mr="4" rounded="md" />
+                      <Link as={RouterLink} to={`/products/${item.product}`} fontWeight="bold" fontSize="lg" color="teal.600">{item.name}</Link>
                     </Flex>
-                    <Text fontWeight="medium">
-                      {item.qty} x ${item.price} = ${item.qty * item.price}
-                    </Text>
+                    <Text fontWeight="medium">{item.qty} x ${item.price} = ${item.qty * item.price}</Text>
                   </Flex>
                 ))}
               </VStack>
@@ -153,76 +126,40 @@ const OrderScreen = () => {
           </Box>
         </VStack>
 
-        {/* Right Side - Order Summary */}
+        {/* Right Side */}
         <Box bg={cardBg} p="8" shadow="lg" rounded="lg" borderWidth="1px">
-          <Heading fontSize="2xl" mb="6" textAlign="center">
-            Order Summary
-          </Heading>
-
+          <Heading fontSize="2xl" mb="6" textAlign="center">Order Summary</Heading>
           <VStack spacing="4" divider={<Divider />}>
-            <Flex justify="space-between" w="full">
-              <Text>Items</Text>
-              <Text fontWeight="bold">${order.itemsPrice}</Text>
-            </Flex>
-            <Flex justify="space-between" w="full">
-              <Text>Shipping</Text>
-              <Text fontWeight="bold">${order.shippingPrice}</Text>
-            </Flex>
-            <Flex justify="space-between" w="full">
-              <Text>Tax</Text>
-              <Text fontWeight="bold">${order.taxPrice}</Text>
-            </Flex>
-            <Flex justify="space-between" w="full">
-              <Text>Total</Text>
-              <Text fontWeight="bold" fontSize="xl">${order.totalPrice}</Text>
-            </Flex>
+            <Flex justify="space-between" w="full"><Text>Items</Text><Text fontWeight="bold">${order.itemsPrice}</Text></Flex>
+            <Flex justify="space-between" w="full"><Text>Shipping</Text><Text fontWeight="bold">${order.shippingPrice}</Text></Flex>
+            <Flex justify="space-between" w="full"><Text>Tax</Text><Text fontWeight="bold">${order.taxPrice}</Text></Flex>
+            <Flex justify="space-between" w="full"><Text>Total</Text><Text fontWeight="bold" fontSize="xl">${order.totalPrice}</Text></Flex>
           </VStack>
 
-          {/* PayPal Button */}
           {!order.isPaid && (
             <Box mt="8">
-              {loadingPay ? (
-                <Loader />
-              ) : (
-                <PayPalScriptProvider
-                  options={{
-                    "client-id": "AbCWawRqgTtLVVCXOZojr41rc7ooz60ClZWU8y8UynDk3KmHn5syU0o41cyMi5iyh_E3brYWPGuLOFfr",
-                    components: "buttons",
-                  }}
-                >
+              {loadingPay ? <Loader /> : (
+                <PayPalScriptProvider options={{"client-id": "AbCWawRqgTtLVVCXOZojr41rc7ooz60ClZWU8y8UynDk3KmHn5syU0o41cyMi5iyh_E3brYWPGuLOFfr", components: "buttons"}}>
                   <PayPalButtons
-                    createOrder={(data, actions) => actions.order.create({
-                      purchase_units: [{ amount: { value: order.totalPrice } }],
+                    createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
+                    onApprove={(data, actions) => actions.order.capture().then((details) => {
+                      const paymentResult = {
+                        id: details.id,
+                        status: details.status,
+                        update_time: details.update_time,
+                        email_address: details.payer.email_address,
+                      };
+                      successPaymentHandler(paymentResult);
                     })}
-                    onApprove={(data, actions) =>
-                      actions.order.capture().then((details) => {
-                        const paymentResult = {
-                          id: details.id,
-                          status: details.status,
-                          update_time: details.update_time,
-                          email_address: details.payer.email_address,
-                        };
-                        successPaymentHandler(paymentResult);
-                      })
-                    }
                   />
                 </PayPalScriptProvider>
               )}
             </Box>
           )}
 
-          {/* Deliver Button */}
           {loadingDeliver && <Loader />}
           {userInfo && userInfo.isAdmin && !order.isDelivered && (
-            <Button
-              mt="6"
-              w="full"
-              colorScheme="teal"
-              onClick={deliverHandler}
-              size="lg"
-            >
-              Mark as Delivered
-            </Button>
+            <Button mt="6" w="full" colorScheme="teal" onClick={deliverHandler} size="lg">Mark as Delivered</Button>
           )}
         </Box>
       </Grid>

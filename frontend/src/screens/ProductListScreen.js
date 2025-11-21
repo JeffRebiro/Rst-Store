@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Flex,
+  Grid,
   Heading,
   Icon,
   Input,
@@ -13,7 +14,6 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
   Text,
   Stack,
   useBreakpointValue,
@@ -29,18 +29,17 @@ import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import {
-  createProduct,
-  deleteProduct,
-  listProducts,
-} from "../actions/productActions";
+import { createProduct, deleteProduct, listProducts } from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
+import { useTheme } from "next-themes";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isLight = theme?.resolvedTheme === "light";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
@@ -56,16 +55,11 @@ const ProductListScreen = () => {
   const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
 
   const productCreate = useSelector((state) => state.productCreate);
-  const {
-    loading: loadingCreate,
-    error: errorCreate,
-    success: successCreate,
-    product: createdProduct,
-  } = productCreate;
+  const { loading: loadingCreate, error: errorCreate, success: successCreate, product: createdProduct } = productCreate;
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const hoverColor = useColorModeValue("gray.100", "gray.700");
-  const tableHeaderColor = useColorModeValue("gray.200", "gray.700");
+  const bgColor = isLight ? "white" : "gray.800";
+  const hoverColor = isLight ? "gray.100" : "gray.700";
+  const tableHeaderColor = isLight ? "gray.200" : "gray.700";
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -144,15 +138,7 @@ const ProductListScreen = () => {
       ) : error ? (
         <Message type="error">{error}</Message>
       ) : (
-        <Box
-          bgColor={bgColor}
-          rounded="lg"
-          shadow="lg"
-          px={{ base: 2, md: 5 }}
-          py={{ base: 2, md: 5 }}
-          mt="4"
-          mx={{ base: 2, md: 5 }}
-        >
+        <Box bgColor={bgColor} rounded="lg" shadow="lg" px={{ base: 2, md: 5 }} py={{ base: 2, md: 5 }} mt="4" mx={{ base: 2, md: 5 }}>
           {!isMobile ? (
             <Box overflowX="auto">
               <Table variant="striped" size="sm">
@@ -176,22 +162,10 @@ const ProductListScreen = () => {
                       <Td>{product.brand}</Td>
                       <Td>
                         <Flex gap={2} justify="flex-end">
-                          <Button
-                            as={RouterLink}
-                            to={`/admin/product/${product._id}/edit`}
-                            colorScheme="teal"
-                            size="sm"
-                            variant="outline"
-                            leftIcon={<IoPencilSharp />}
-                          >
+                          <Button as={RouterLink} to={`/admin/product/${product._id}/edit`} colorScheme="teal" size="sm" variant="outline" leftIcon={<IoPencilSharp />}>
                             Edit
                           </Button>
-                          <Button
-                            colorScheme="red"
-                            size="sm"
-                            onClick={() => deleteHandler(product._id)}
-                            leftIcon={<IoTrashBinSharp />}
-                          >
+                          <Button colorScheme="red" size="sm" onClick={() => deleteHandler(product._id)} leftIcon={<IoTrashBinSharp />}>
                             Delete
                           </Button>
                         </Flex>
@@ -204,52 +178,22 @@ const ProductListScreen = () => {
           ) : (
             <Stack spacing={4}>
               {filteredProducts.map((product) => (
-                <Box
-                  key={product._id}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  shadow="sm"
-                  p={4}
-                  bgColor={bgColor}
-                >
+                <Box key={product._id} borderWidth="1px" borderRadius="lg" overflow="hidden" shadow="sm" p={4} bgColor={bgColor}>
                   <Flex justifyContent="space-between" alignItems="center" mb={2}>
-                    <Text fontSize="sm" fontWeight="bold" color="gray.600">
-                      ID: {product._id}
-                    </Text>
+                    <Text fontSize="sm" fontWeight="bold" color="gray.600">ID: {product._id}</Text>
                     <Flex gap={2} direction="column">
-                      <Button
-                        as={RouterLink}
-                        to={`/admin/product/${product._id}/edit`}
-                        colorScheme="teal"
-                        size="sm"
-                        variant="outline"
-                        leftIcon={<IoPencilSharp />}
-                      >
+                      <Button as={RouterLink} to={`/admin/product/${product._id}/edit`} colorScheme="teal" size="sm" variant="outline" leftIcon={<IoPencilSharp />}>
                         Edit
                       </Button>
-                      <Button
-                        colorScheme="red"
-                        size="sm"
-                        onClick={() => deleteHandler(product._id)}
-                        leftIcon={<IoTrashBinSharp />}
-                      >
+                      <Button colorScheme="red" size="sm" onClick={() => deleteHandler(product._id)} leftIcon={<IoTrashBinSharp />}>
                         Delete
                       </Button>
                     </Flex>
                   </Flex>
-                  <Text fontWeight="medium" color="gray.700">
-                    {product.name}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    Price: ${product.price.toFixed(2)}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    Category: {product.category}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    Brand: {product.brand}
-                  </Text>
+                  <Text fontWeight="medium" color="gray.700">{product.name}</Text>
+                  <Text fontSize="sm" color="gray.600">Price: ${product.price.toFixed(2)}</Text>
+                  <Text fontSize="sm" color="gray.600">Category: {product.category}</Text>
+                  <Text fontSize="sm" color="gray.600">Brand: {product.brand}</Text>
                 </Box>
               ))}
             </Stack>

@@ -4,10 +4,9 @@ import {
   Heading,
   VStack,
   Box,
-  useColorModeValue,
   RadioGroup,
   Radio,
-  Fieldset,
+  useTheme,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -32,14 +31,13 @@ const PaymentScreen = () => {
     paymentMethod || "paypal"
   );
 
-  useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
+  const theme = useTheme();
+  const isLight = theme?.colorMode === "light";
+  const boxBg = isLight ? "white" : "gray.700";
 
-    if (!shippingAddress) {
-      navigate("/shipping");
-    }
+  useEffect(() => {
+    if (!userInfo) navigate("/login");
+    if (!shippingAddress) navigate("/shipping");
   }, [navigate, shippingAddress, userInfo]);
 
   const submitHandler = (e) => {
@@ -51,12 +49,7 @@ const PaymentScreen = () => {
   return (
     <Flex w="full" alignItems="center" justifyContent="center" py="10">
       <FormContainer>
-        <Box
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow="lg"
-          p="8"
-          rounded="lg"
-        >
+        <Box bg={boxBg} boxShadow="lg" p="8" rounded="lg">
           {/* Checkout Steps */}
           <CheckoutSteps step1 step2 step3 />
 
@@ -68,32 +61,22 @@ const PaymentScreen = () => {
           {/* Form */}
           <form onSubmit={submitHandler}>
             <VStack spacing="6" align="stretch">
-              {/* Payment Options - NEW V3 FIELDSET */}
-              <Fieldset.Root>
-                <Fieldset.Legend fontWeight="bold">
-                  Payment Options
-                </Fieldset.Legend>
-
-                <RadioGroup
-                  value={paymentMethodRadio}
-                  onChange={setPaymentMethodRadio}
-                >
-                  <VStack align="start" spacing="4">
-                    <Radio value="paypal" size="lg">
-                      PayPal or Credit/Debit Card
-                    </Radio>
-
-                    {/* Add more options here if you want */}
-                  </VStack>
-                </RadioGroup>
-              </Fieldset.Root>
+              {/* Payment Options */}
+              <RadioGroup value={paymentMethodRadio} onChange={setPaymentMethodRadio}>
+                <VStack align="start" spacing="4">
+                  <Radio value="paypal" size="lg">
+                    PayPal or Credit/Debit Card
+                  </Radio>
+                  {/* Add more options if needed */}
+                </VStack>
+              </RadioGroup>
 
               {/* Submit */}
               <Button
                 type="submit"
                 colorScheme="teal"
                 size="lg"
-                width="full"
+                w="full"
                 mt="4"
                 _hover={{ bg: "teal.600" }}
               >

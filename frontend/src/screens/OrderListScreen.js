@@ -1,14 +1,14 @@
 import {
-	Box,
-	Button,
-	Badge,
-	Flex,
-	Heading,
-	Icon,
-	SimpleGrid,
-	Text,
-	useColorModeValue,
-	Stack,
+  Box,
+  Button,
+  Badge,
+  Flex,
+  Heading,
+  Icon,
+  SimpleGrid,
+  Text,
+  Stack,
+  useTheme,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { HiOutlineClipboardList } from 'react-icons/hi';
@@ -19,102 +19,105 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const OrderListScreen = () => {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-	const orderList = useSelector((state) => state.orderList);
-	const { loading, error, orders } = orderList;
+  const orderList = useSelector((state) => state.orderList);
+  const { loading, error, orders } = orderList;
 
-	const userLogin = useSelector((state) => state.userLogin);
-	const { userInfo } = userLogin;
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
-	// Move ALL hooks to the top level - never call hooks conditionally
-	const cardBg = useColorModeValue('white', 'gray.800');
-	const cardHoverBg = useColorModeValue('gray.50', 'gray.700');
-	const containerBg = useColorModeValue('gray.100', 'gray.900'); // Added this line
+  // Get current theme (light or dark)
+  const theme = useTheme();
+  const isLight = theme?.colorMode === 'light';
 
-	useEffect(() => {
-		if (userInfo && userInfo.isAdmin) {
-			dispatch(listOrders());
-		} else {
-			navigate('/login');
-		}
-	}, [dispatch, userInfo, navigate]);
+  const cardBg = isLight ? 'white' : 'gray.800';
+  const cardHoverBg = isLight ? 'gray.50' : 'gray.700';
+  const containerBg = isLight ? 'gray.100' : 'gray.900';
 
-	return (
-		<>
-			<Flex align="center" justify="center" mb={6}>
-				<Icon as={HiOutlineClipboardList} w={8} h={8} mr={3} color="teal.500" />
-				<Heading as="h1" fontSize={{ base: '2xl', md: '3xl' }} textAlign="center">
-					Order Management
-				</Heading>
-			</Flex>
+  useEffect(() => {
+    if (userInfo && userInfo.isAdmin) {
+      dispatch(listOrders());
+    } else {
+      navigate('/login');
+    }
+  }, [dispatch, userInfo, navigate]);
 
-			{loading ? (
-				<Loader />
-			) : error ? (
-				<Message type="error">{error}</Message>
-			) : (
-				<Box
-					bg={containerBg} // Use the pre-defined variable here instead of calling useColorModeValue conditionally
-					p={{ base: 2, md: 5 }}
-					rounded="lg"
-					mx={{ base: 2, md: 10 }}
-				>
-					<SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={5}>
-						{orders.map((order) => (
-							<Box
-								key={order._id}
-								bg={cardBg}
-								borderWidth="1px"
-								borderRadius="md"
-								shadow="md"
-								p={5}
-								transition="all 0.3s"
-								_hover={{ bg: cardHoverBg, shadow: 'xl' }}
-							>
-								<Stack spacing={3}>
-									<Flex justify="space-between" align="center">
-										<Text fontWeight="bold" fontSize="md">
-											Order #{order._id.substring(0, 8)}...
-										</Text>
-										<Button
-											as={RouterLink}
-											to={`/order/${order._id}`}
-											size="sm"
-											colorScheme="teal"
-											variant="solid"
-										>
-											View Details
-										</Button>
-									</Flex>
+  return (
+    <>
+      <Flex align="center" justify="center" mb={6}>
+        <Icon as={HiOutlineClipboardList} w={8} h={8} mr={3} color="teal.500" />
+        <Heading as="h1" fontSize={{ base: '2xl', md: '3xl' }} textAlign="center">
+          Order Management
+        </Heading>
+      </Flex>
 
-									<Text fontSize="sm">
-										<strong>User:</strong> {order.user && order.user.name}
-									</Text>
-									<Text fontSize="sm">
-										<strong>Date:</strong> {order.createdAt.substring(0, 10)}
-									</Text>
-									<Text fontSize="sm">
-										<strong>Total:</strong> ${order.totalPrice.toFixed(2)}
-									</Text>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message type="error">{error}</Message>
+      ) : (
+        <Box
+          bg={containerBg}
+          p={{ base: 2, md: 5 }}
+          rounded="lg"
+          mx={{ base: 2, md: 10 }}
+        >
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={5}>
+            {orders.map((order) => (
+              <Box
+                key={order._id}
+                bg={cardBg}
+                borderWidth="1px"
+                borderRadius="md"
+                shadow="md"
+                p={5}
+                transition="all 0.3s"
+                _hover={{ bg: cardHoverBg, shadow: 'xl' }}
+              >
+                <Stack spacing={3}>
+                  <Flex justify="space-between" align="center">
+                    <Text fontWeight="bold" fontSize="md">
+                      Order #{order._id.substring(0, 8)}...
+                    </Text>
+                    <Button
+                      as={RouterLink}
+                      to={`/order/${order._id}`}
+                      size="sm"
+                      colorScheme="teal"
+                      variant="solid"
+                    >
+                      View Details
+                    </Button>
+                  </Flex>
 
-									<Flex gap={2} flexWrap="wrap">
-										<Badge colorScheme={order.isPaid ? 'green' : 'red'}>
-											{order.isPaid ? `Paid: ${order.paidAt.substring(0, 10)}` : 'Not Paid'}
-										</Badge>
-										<Badge colorScheme={order.isDelivered ? 'green' : 'red'}>
-											{order.isDelivered ? `Delivered: ${order.deliveredAt.substring(0, 10)}` : 'Not Delivered'}
-										</Badge>
-									</Flex>
-								</Stack>
-							</Box>
-						))}
-					</SimpleGrid>
-				</Box>
-			)}
-		</>
-	);
+                  <Text fontSize="sm">
+                    <strong>User:</strong> {order.user && order.user.name}
+                  </Text>
+                  <Text fontSize="sm">
+                    <strong>Date:</strong> {order.createdAt.substring(0, 10)}
+                  </Text>
+                  <Text fontSize="sm">
+                    <strong>Total:</strong> ${order.totalPrice.toFixed(2)}
+                  </Text>
+
+                  <Flex gap={2} flexWrap="wrap">
+                    <Badge colorScheme={order.isPaid ? 'green' : 'red'}>
+                      {order.isPaid ? `Paid: ${order.paidAt.substring(0, 10)}` : 'Not Paid'}
+                    </Badge>
+                    <Badge colorScheme={order.isDelivered ? 'green' : 'red'}>
+                      {order.isDelivered ? `Delivered: ${order.deliveredAt.substring(0, 10)}` : 'Not Delivered'}
+                    </Badge>
+                  </Flex>
+                </Stack>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Box>
+      )}
+    </>
+  );
 };
 
 export default OrderListScreen;
