@@ -11,7 +11,7 @@ import {
   Badge,
 } from "@chakra-ui/react";
 
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
 import { Separator } from "@chakra-ui/react";
 
 import { useEffect } from "react";
