@@ -1,31 +1,12 @@
-import { Box, Flex, Icon, Text } from "@chakra-ui/react";
-import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
+import { Flex, Text } from "@chakra-ui/react";
 
 const Rating = ({ value, text, color = "red.500" }) => {
   return (
     <Flex align="center" gap="1">
-      <Flex>
-        <Icon
-          as={value >= 1 ? IoStar : value >= 0.5 ? IoStarHalf : IoStarOutline}
-          color={color}
-        />
-        <Icon
-          as={value >= 2 ? IoStar : value >= 1.5 ? IoStarHalf : IoStarOutline}
-          color={color}
-        />
-        <Icon
-          as={value >= 3 ? IoStar : value >= 2.5 ? IoStarHalf : IoStarOutline}
-          color={color}
-        />
-        <Icon
-          as={value >= 4 ? IoStar : value >= 3.5 ? IoStarHalf : IoStarOutline}
-          color={color}
-        />
-        <Icon
-          as={value >= 5 ? IoStar : value >= 4.5 ? IoStarHalf : IoStarOutline}
-          color={color}
-        />
-      </Flex>
+      <Text color={color} fontSize="lg">
+        {'★'.repeat(Math.floor(value))}
+        {'☆'.repeat(5 - Math.floor(value))}
+      </Text>
       {text && <Text fontSize="sm">{text}</Text>}
     </Flex>
   );
