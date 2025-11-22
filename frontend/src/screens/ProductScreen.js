@@ -21,7 +21,7 @@ import {
 } from "../actions/productActions";
 import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants";
 
-// Inline Loader component
+// Inline Loader component only
 const Loader = () => (
   <Flex alignItems="center" justifyContent="center">
     <Spinner
@@ -31,33 +31,6 @@ const Loader = () => (
       color="blue.500"
       size="xl"
     />
-  </Flex>
-);
-
-// Inline Message component
-const Message = ({ type = "info", children }) => (
-  <Box
-    bg={type === "error" ? "red.100" : "blue.100"}
-    border="1px"
-    borderColor={type === "error" ? "red.300" : "blue.300"}
-    color={type === "error" ? "red.800" : "blue.800"}
-    px="4"
-    py="3"
-    borderRadius="md"
-    mb="4"
-  >
-    {children}
-  </Box>
-);
-
-// Inline Rating component
-const Rating = ({ value, text, color = "red.500" }) => (
-  <Flex align="center" gap="1">
-    <Text color={color} fontSize="lg">
-      {'★'.repeat(Math.floor(value))}
-      {'☆'.repeat(5 - Math.floor(value))}
-    </Text>
-    {text && <Text fontSize="sm">{text}</Text>}
   </Flex>
 );
 
@@ -112,7 +85,18 @@ const ProductScreen = () => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message type="error">{error}</Message>
+        <Box
+          bg="red.100"
+          border="1px"
+          borderColor="red.300"
+          color="red.800"
+          px="4"
+          py="3"
+          borderRadius="md"
+          mb="4"
+        >
+          {error}
+        </Box>
       ) : product ? (
         <>
           <Grid
@@ -142,12 +126,13 @@ const ProductScreen = () => {
                 <Text fontSize="lg" color="gray.500" mb="4">
                   {product?.brand}
                 </Text>
-                <Rating
-                  value={product?.rating}
-                  color="yellow.500"
-                  text={`${product?.numReviews || 0} reviews`}
-                  mb="4"
-                />
+                <Flex align="center" gap="1" mb="4">
+                  <Text color="yellow.500" fontSize="lg">
+                    {'★'.repeat(Math.floor(product?.rating))}
+                    {'☆'.repeat(5 - Math.floor(product?.rating))}
+                  </Text>
+                  <Text fontSize="sm">{`${product?.numReviews || 0} reviews`}</Text>
+                </Flex>
                 <Text fontSize="xl" fontWeight="bold" color="teal.800">
                   ${product?.price}
                 </Text>
@@ -203,7 +188,18 @@ const ProductScreen = () => {
             </Heading>
 
             {product?.reviews?.length === 0 ? (
-              <Message>No Reviews</Message>
+              <Box
+                bg="blue.100"
+                border="1px"
+                borderColor="blue.300"
+                color="blue.800"
+                px="4"
+                py="3"
+                borderRadius="md"
+                mb="4"
+              >
+                No Reviews
+              </Box>
             ) : (
               product?.reviews?.map((review) => (
                 <Box
@@ -215,7 +211,12 @@ const ProductScreen = () => {
                 >
                   <Flex justifyContent="space-between" alignItems="center">
                     <Text fontWeight="bold">{review.name}</Text>
-                    <Rating value={review.rating} />
+                    <Flex align="center" gap="1">
+                      <Text color="red.500" fontSize="lg">
+                        {'★'.repeat(Math.floor(review.rating))}
+                        {'☆'.repeat(5 - Math.floor(review.rating))}
+                      </Text>
+                    </Flex>
                   </Flex>
                   <Text mt="2" color="gray.600">
                     {review.comment}
@@ -225,7 +226,18 @@ const ProductScreen = () => {
             )}
 
             {errorProductReview && (
-              <Message type="error">{errorProductReview}</Message>
+              <Box
+                bg="red.100"
+                border="1px"
+                borderColor="red.300"
+                color="red.800"
+                px="4"
+                py="3"
+                borderRadius="md"
+                mb="4"
+              >
+                {errorProductReview}
+              </Box>
             )}
 
             {userInfo ? (
@@ -263,7 +275,18 @@ const ProductScreen = () => {
                 </Button>
               </form>
             ) : (
-              <Message>Please log in to write a review</Message>
+              <Box
+                bg="blue.100"
+                border="1px"
+                borderColor="blue.300"
+                color="blue.800"
+                px="4"
+                py="3"
+                borderRadius="md"
+                mb="4"
+              >
+                Please log in to write a review
+              </Box>
             )}
           </Box>
         </>
