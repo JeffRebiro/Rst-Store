@@ -42,8 +42,23 @@ const ShippingScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    
+    // Validate that all fields are filled
+    if (!address || !city || !postalCode || !country) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    console.log('Submitting shipping address:', { address, city, postalCode, country });
+    
     dispatch(saveShippingAddress({ address, city, postalCode, country }));
     navigate("/payment");
+  };
+
+  const handleCountryChange = (e) => {
+    const selectedCountry = e.value;
+    console.log('Country selected:', selectedCountry);
+    setCountry(selectedCountry);
   };
 
   return (
@@ -72,6 +87,7 @@ const ShippingScreen = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 focusBorderColor="teal.500"
+                required
               />
             </Box>
 
@@ -86,6 +102,7 @@ const ShippingScreen = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 focusBorderColor="teal.500"
+                required
               />
             </Box>
 
@@ -100,6 +117,7 @@ const ShippingScreen = () => {
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
                 focusBorderColor="teal.500"
+                required
               />
             </Box>
 
@@ -110,12 +128,13 @@ const ShippingScreen = () => {
               </Text>
               <NativeSelect.Root
                 value={country}
-                onValueChange={(e) => setCountry(e.value)}
+                onValueChange={handleCountryChange}
               >
                 <NativeSelect.Field 
                   placeholder="Select your country"
                   focusBorderColor="teal.500"
                 >
+                  <option value="">Select your country</option>
                   {countries.map((countryOption) => (
                     <option key={countryOption} value={countryOption}>
                       {countryOption}
