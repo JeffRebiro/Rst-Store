@@ -7,6 +7,7 @@ import {
   VStack,
   Box,
   Text,
+  Radio,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -74,32 +75,17 @@ const PaymentScreen = () => {
                 <Field.Label fontWeight="semibold" fontSize="lg">
                   Choose your payment method
                 </Field.Label>
-                <RadioGroup.Root
-                  value={paymentMethodRadio}
-                  onValueChange={({ value }) => setPaymentMethodRadio(value)}
-                >
+                <RadioGroup value={paymentMethodRadio} onValueChange={setPaymentMethodRadio}>
                   <VStack align="start" gap="4">
-                    <RadioGroup.Item value="paypal">
-                      <RadioGroup.ItemInput />
-                      <RadioGroup.ItemControl>
-                        <RadioGroup.ItemIndicator />
-                      </RadioGroup.ItemControl>
-                      <RadioGroup.ItemText>
-                        PayPal or Credit/Debit Card
-                      </RadioGroup.ItemText>
-                    </RadioGroup.Item>
+                    <Radio value="paypal" size="lg">
+                      PayPal or Credit/Debit Card
+                    </Radio>
                     {/* Additional payment options can be added here */}
-                    {/* <RadioGroup.Item value="stripe">
-                      <RadioGroup.ItemInput />
-                      <RadioGroup.ItemControl>
-                        <RadioGroup.ItemIndicator />
-                      </RadioGroup.ItemControl>
-                      <RadioGroup.ItemText>
-                        Stripe
-                      </RadioGroup.ItemText>
-                    </RadioGroup.Item> */}
+                    {/* <Radio value="stripe" size="lg">
+                      Stripe
+                    </Radio> */}
                   </VStack>
-                </RadioGroup.Root>
+                </RadioGroup>
               </Field.Root>
 
               {/* Submit Button */}
