@@ -38,6 +38,13 @@ const PaymentScreen = () => {
     if (!shippingAddress) navigate("/shipping");
   }, [navigate, shippingAddress, userInfo]);
 
+  // Safe function to format payment method for display
+  const formatPaymentMethod = (method) => {
+    if (!method) return "PayPal";
+    if (typeof method !== 'string') return "PayPal";
+    return method.replace('_', ' ').toUpperCase();
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(savePaymentMethod(paymentMethodRadio));
@@ -70,7 +77,7 @@ const PaymentScreen = () => {
             textAlign="center"
           >
             <Text fontWeight="bold" color="teal.700" fontSize="lg">
-              Selected: {paymentMethodRadio.replace('_', ' ').toUpperCase()}
+              Selected: {formatPaymentMethod(paymentMethodRadio)}
             </Text>
           </Box>
 
@@ -172,7 +179,7 @@ const PaymentScreen = () => {
                 mt="4"
                 _hover={{ bg: "teal.600" }}
               >
-                Continue with {paymentMethodRadio.replace('_', ' ')}
+                Continue with {formatPaymentMethod(paymentMethodRadio)}
               </Button>
             </VStack>
           </form>
