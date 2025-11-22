@@ -2,11 +2,11 @@ import {
   Button,
   Flex,
   Input,
-  Select,
   VStack,
   Box,
   Heading,
   Text,
+  NativeSelect,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -108,18 +108,21 @@ const ShippingScreen = () => {
               <Text as="label" display="block" mb="2" fontWeight="medium">
                 Country
               </Text>
-              <Select
+              <NativeSelect.Root
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                placeholder="Select your country"
-                focusBorderColor="teal.500"
+                onValueChange={(e) => setCountry(e.value)}
               >
-                {countries.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </Select>
+                <NativeSelect.Field 
+                  placeholder="Select your country"
+                  focusBorderColor="teal.500"
+                >
+                  {countries.map((countryOption) => (
+                    <option key={countryOption} value={countryOption}>
+                      {countryOption}
+                    </option>
+                  ))}
+                </NativeSelect.Field>
+              </NativeSelect.Root>
             </Box>
 
             {/* Submit Button */}
