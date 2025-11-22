@@ -6,7 +6,7 @@ import {
   VStack,
   Box,
   Heading,
-  Field,
+  Text,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -62,8 +62,10 @@ const ShippingScreen = () => {
         <form onSubmit={submitHandler}>
           <VStack spacing="6" align="stretch">
             {/* Address Field */}
-            <Field.Root>
-              <Field.Label>Address</Field.Label>
+            <Box>
+              <Text as="label" display="block" mb="2" fontWeight="medium">
+                Address
+              </Text>
               <Input
                 type="text"
                 placeholder="Enter your address"
@@ -71,11 +73,13 @@ const ShippingScreen = () => {
                 onChange={(e) => setAddress(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </Box>
 
             {/* City Field */}
-            <Field.Root>
-              <Field.Label>City</Field.Label>
+            <Box>
+              <Text as="label" display="block" mb="2" fontWeight="medium">
+                City
+              </Text>
               <Input
                 type="text"
                 placeholder="Enter your city"
@@ -83,11 +87,13 @@ const ShippingScreen = () => {
                 onChange={(e) => setCity(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </Box>
 
             {/* Postal Code Field */}
-            <Field.Root>
-              <Field.Label>Postal Code</Field.Label>
+            <Box>
+              <Text as="label" display="block" mb="2" fontWeight="medium">
+                Postal Code
+              </Text>
               <Input
                 type="text"
                 placeholder="Enter your postal code"
@@ -95,11 +101,13 @@ const ShippingScreen = () => {
                 onChange={(e) => setPostalCode(e.target.value)}
                 focusBorderColor="teal.500"
               />
-            </Field.Root>
+            </Box>
 
             {/* Country Field */}
-            <Field.Root>
-              <Field.Label>Country</Field.Label>
+            <Box>
+              <Text as="label" display="block" mb="2" fontWeight="medium">
+                Country
+              </Text>
               <Select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
@@ -112,7 +120,7 @@ const ShippingScreen = () => {
                   </option>
                 ))}
               </Select>
-            </Field.Root>
+            </Box>
 
             {/* Submit Button */}
             <Button
