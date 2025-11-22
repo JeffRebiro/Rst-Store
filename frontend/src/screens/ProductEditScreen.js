@@ -7,7 +7,6 @@ import {
   Link,
   Box,
   VStack,
-  Toast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,11 +45,8 @@ const ProductEditScreen = () => {
 
   useEffect(() => {
     if (successUpdate) {
-      Toast.create({
-        title: "Product Updated.",
-        status: "success",
-        duration: 3000,
-      });
+      // Simple alert as fallback for toast
+      alert("Product updated successfully!");
       dispatch({ type: PRODUCT_UPDATE_RESET });
       navigate(`/admin/productlist`);
     } else {
