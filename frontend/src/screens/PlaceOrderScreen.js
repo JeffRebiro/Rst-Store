@@ -6,6 +6,7 @@ import {
   Heading,
   Image,
   Link,
+  Stack,
   Text,
   Separator,
 } from "@chakra-ui/react";
@@ -65,7 +66,7 @@ const PlaceOrderScreen = () => {
       <CheckoutSteps step1 step2 step3 step4 />
 
       <Grid templateColumns={{ base: "1fr", lg: "2.5fr 1fr" }} gap="8" mt="8">
-        <Flex direction="column" gap="6">
+        <Stack gap="6">
           <Box
             p="6"
             bg="white"
@@ -73,18 +74,18 @@ const PlaceOrderScreen = () => {
             shadow="md"
             border="1px solid"
             borderColor="gray.200"
-            _dark={{
+            _dark={{ 
               bg: "gray.700",
-              borderColor: "gray.600",
+              borderColor: "gray.600"
             }}
           >
             <Heading fontSize="2xl" mb="4">
               Shipping Information
             </Heading>
             <Text fontSize="md">
-              <strong>Address:</strong> {cart.shippingAddress.address},{" "}
-              {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},{" "}
-              {cart.shippingAddress.country}
+              <strong>Address:</strong> {cart.shippingAddress?.address},{" "}
+              {cart.shippingAddress?.city}, {cart.shippingAddress?.postalCode},{" "}
+              {cart.shippingAddress?.country}
             </Text>
           </Box>
 
@@ -95,16 +96,16 @@ const PlaceOrderScreen = () => {
             shadow="md"
             border="1px solid"
             borderColor="gray.200"
-            _dark={{
+            _dark={{ 
               bg: "gray.700",
-              borderColor: "gray.600",
+              borderColor: "gray.600"
             }}
           >
             <Heading fontSize="2xl" mb="4">
               Payment Method
             </Heading>
             <Text fontSize="md">
-              <strong>Method:</strong> {cart.paymentMethod.toUpperCase()}
+              <strong>Method:</strong> {cart.paymentMethod?.toUpperCase()}
             </Text>
           </Box>
 
@@ -115,9 +116,9 @@ const PlaceOrderScreen = () => {
             shadow="md"
             border="1px solid"
             borderColor="gray.200"
-            _dark={{
+            _dark={{ 
               bg: "gray.700",
-              borderColor: "gray.600",
+              borderColor: "gray.600"
             }}
           >
             <Heading fontSize="2xl" mb="4">
@@ -127,7 +128,7 @@ const PlaceOrderScreen = () => {
             {cart.cartItems.length === 0 ? (
               <Message>Your cart is empty.</Message>
             ) : (
-              <Flex direction="column" gap="4">
+              <Stack gap="4">
                 {cart.cartItems.map((item, idx) => (
                   <Flex
                     key={idx}
@@ -161,10 +162,10 @@ const PlaceOrderScreen = () => {
                     </Text>
                   </Flex>
                 ))}
-              </Flex>
+              </Stack>
             )}
           </Box>
-        </Flex>
+        </Stack>
 
         <Flex
           direction="column"
@@ -174,16 +175,16 @@ const PlaceOrderScreen = () => {
           rounded="lg"
           border="1px solid"
           borderColor="gray.200"
-          _dark={{
+          _dark={{ 
             bg: "gray.700",
-            borderColor: "gray.600",
+            borderColor: "gray.600"
           }}
         >
           <Heading fontSize="2xl" mb="6">
             Order Summary
           </Heading>
 
-          <Flex direction="column" gap="4">
+          <Stack gap="4">
             <Flex justify="space-between">
               <Text fontSize="md">Items</Text>
               <Text fontWeight="bold">₹{cart.itemsPrice}</Text>
@@ -210,7 +211,7 @@ const PlaceOrderScreen = () => {
                 ₹{cart.totalPrice}
               </Text>
             </Flex>
-          </Flex>
+          </Stack>
 
           <Button
             size="lg"

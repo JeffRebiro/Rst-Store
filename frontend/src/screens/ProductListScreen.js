@@ -3,43 +3,34 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Table,
   Text,
   Stack,
-  useBreakpointValue,
-  useDisclosure,
-  DialogRoot,
-  DialogBackdrop,
-  DialogPositioner,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogBody,
-  DialogFooter,
+  Dialog,
 } from "@chakra-ui/react";
-
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/table";
-
 import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { createProduct, deleteProduct, listProducts } from "../actions/productActions";
+import {
+  createProduct,
+  deleteProduct,
+  listProducts,
+} from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
-import { useTheme as useNextTheme } from "next-themes";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { resolvedTheme } = useNextTheme();
-  const isLight = resolvedTheme === "light";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
@@ -51,13 +42,12 @@ const ProductListScreen = () => {
   const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
 
   const productCreate = useSelector((state) => state.productCreate);
-  const { loading: loadingCreate, error: errorCreate, success: successCreate, product: createdProduct } = productCreate;
-
-  const bgColor = isLight ? "white" : "gray.800";
-  const hoverColor = isLight ? "gray.100" : "gray.700";
-  const tableHeaderColor = isLight ? "gray.200" : "gray.700";
-
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
 
   useEffect(() => {
     dispatch({ type: PRODUCT_CREATE_RESET });
@@ -75,12 +65,12 @@ const ProductListScreen = () => {
 
   const deleteHandler = (id) => {
     setDeleteId(id);
-    onOpen();
+    setDialogOpen(true);
   };
 
   const confirmDeleteHandler = () => {
     dispatch(deleteProduct(deleteId));
-    onClose();
+    setDialogOpen(false);
   };
 
   const createProductHandler = () => {
@@ -105,10 +95,10 @@ const ProductListScreen = () => {
         </Heading>
         <Button
           onClick={createProductHandler}
-          colorScheme="teal"
+          colorPalette="teal"
           size={{ base: "md", md: "lg" }}
-          leftIcon={<IoAdd />}
         >
+          <IoSearch style={{ marginRight: '8px' }} />
           Create Product
         </Button>
       </Flex>
@@ -120,7 +110,7 @@ const ProductListScreen = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <InputRightElement>
-          <Icon as={IoSearch} color="gray.500" />
+          <IoSearch style={{ color: 'gray.500' }} />
         </InputRightElement>
       </InputGroup>
 
@@ -135,64 +125,74 @@ const ProductListScreen = () => {
         <Message type="error">{error}</Message>
       ) : (
         <Box
-          bgColor={bgColor}
+          bg="white"
           rounded="lg"
           shadow="lg"
           px={{ base: 2, md: 5 }}
           py={{ base: 2, md: 5 }}
           mt="4"
           mx={{ base: 2, md: 5 }}
+          _dark={{ bg: "gray.800" }}
         >
-          {!isMobile ? (
+          {/* Desktop View */}
+          <Box hideBelow="md">
             <Box overflowX="auto">
-              <Table variant="striped" size="sm">
-                <Thead bgColor={tableHeaderColor}>
-                  <Tr>
-                    <Th>ID</Th>
-                    <Th>NAME</Th>
-                    <Th>PRICE</Th>
-                    <Th>CATEGORY</Th>
-                    <Th>BRAND</Th>
-                    <Th>ACTIONS</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
+              <Table.Root size="sm">
+                <Table.Header bg="gray.100" _dark={{ bg: "gray.700" }}>
+                  <Table.Row>
+                    <Table.ColumnHeader>ID</Table.ColumnHeader>
+                    <Table.ColumnHeader>NAME</Table.ColumnHeader>
+                    <Table.ColumnHeader>PRICE</Table.ColumnHeader>
+                    <Table.ColumnHeader>CATEGORY</Table.ColumnHeader>
+                    <Table.ColumnHeader>BRAND</Table.ColumnHeader>
+                    <Table.ColumnHeader>ACTIONS</Table.ColumnHeader>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
                   {filteredProducts.map((product) => (
-                    <Tr key={product._id} _hover={{ bg: hoverColor }}>
-                      <Td>{product._id}</Td>
-                      <Td>{product.name}</Td>
-                      <Td>${product.price.toFixed(2)}</Td>
-                      <Td>{product.category}</Td>
-                      <Td>{product.brand}</Td>
-                      <Td>
-                        <Flex gap={2} justify="flex-end">
+                    <Table.Row 
+                      key={product._id} 
+                      _hover={{ bg: "gray.50" }}
+                      _dark={{ _hover: { bg: "gray.700" } }}
+                    >
+                      <Table.Cell>{product._id}</Table.Cell>
+                      <Table.Cell>{product.name}</Table.Cell>
+                      <Table.Cell>₹{product.price?.toFixed(2)}</Table.Cell>
+                      <Table.Cell>{product.category}</Table.Cell>
+                      <Table.Cell>{product.brand}</Table.Cell>
+                      <Table.Cell>
+                        <Flex gap="2" justify="flex-end">
                           <Button
-                            as={RouterLink}
-                            to={`/admin/product/${product._id}/edit`}
-                            colorScheme="teal"
+                            asChild
+                            colorPalette="teal"
                             size="sm"
                             variant="outline"
-                            leftIcon={<IoPencilSharp />}
                           >
-                            Edit
+                            <RouterLink to={`/admin/product/${product._id}/edit`}>
+                              <IoPencilSharp style={{ marginRight: '4px' }} />
+                              Edit
+                            </RouterLink>
                           </Button>
                           <Button
-                            colorScheme="red"
+                            colorPalette="red"
                             size="sm"
                             onClick={() => deleteHandler(product._id)}
-                            leftIcon={<IoTrashBinSharp />}
                           >
+                            <IoTrashBinSharp style={{ marginRight: '4px' }} />
                             Delete
                           </Button>
                         </Flex>
-                      </Td>
-                    </Tr>
+                      </Table.Cell>
+                    </Table.Row>
                   ))}
-                </Tbody>
-              </Table>
+                </Table.Body>
+              </Table.Root>
             </Box>
-          ) : (
-            <Stack spacing={4}>
+          </Box>
+
+          {/* Mobile View */}
+          <Box hideFrom="md">
+            <Stack gap="4">
               {filteredProducts.map((product) => (
                 <Box
                   key={product._id}
@@ -200,39 +200,41 @@ const ProductListScreen = () => {
                   borderRadius="lg"
                   overflow="hidden"
                   shadow="sm"
-                  p={4}
-                  bgColor={bgColor}
+                  p="4"
+                  bg="white"
+                  _dark={{ bg: "gray.800" }}
                 >
-                  <Flex justifyContent="space-between" alignItems="center" mb={2}>
+                  <Flex justifyContent="space-between" alignItems="center" mb="2">
                     <Text fontSize="sm" fontWeight="bold" color="gray.600">
                       ID: {product._id}
                     </Text>
-                    <Flex gap={2} direction="column">
+                    <Flex gap="2" direction="column">
                       <Button
-                        as={RouterLink}
-                        to={`/admin/product/${product._id}/edit`}
-                        colorScheme="teal"
+                        asChild
+                        colorPalette="teal"
                         size="sm"
                         variant="outline"
-                        leftIcon={<IoPencilSharp />}
                       >
-                        Edit
+                        <RouterLink to={`/admin/product/${product._id}/edit`}>
+                          <IoPencilSharp style={{ marginRight: '4px' }} />
+                          Edit
+                        </RouterLink>
                       </Button>
                       <Button
-                        colorScheme="red"
+                        colorPalette="red"
                         size="sm"
                         onClick={() => deleteHandler(product._id)}
-                        leftIcon={<IoTrashBinSharp />}
                       >
+                        <IoTrashBinSharp style={{ marginRight: '4px' }} />
                         Delete
                       </Button>
                     </Flex>
                   </Flex>
-                  <Text fontWeight="medium" color="gray.700">
+                  <Text fontWeight="medium" color="gray.700" _dark={{ color: "white" }}>
                     {product.name}
                   </Text>
                   <Text fontSize="sm" color="gray.600">
-                    Price: ${product.price.toFixed(2)}
+                    Price: ₹{product.price?.toFixed(2)}
                   </Text>
                   <Text fontSize="sm" color="gray.600">
                     Category: {product.category}
@@ -243,39 +245,34 @@ const ProductListScreen = () => {
                 </Box>
               ))}
             </Stack>
-          )}
+          </Box>
         </Box>
       )}
 
-      {/* Confirm Delete Dialog (v3) */}
-      <DialogRoot
-        open={isOpen}
-        onOpenChange={(details) => {
-          if (!details.open) onClose();
-        }}
+      {/* Confirm Delete Dialog */}
+      <Dialog.Root 
+        open={dialogOpen} 
+        onOpenChange={(e) => setDialogOpen(e.open)}
         placement="center"
-        closeOnInteractOutside={true}
       >
-        <DialogBackdrop />
-        <DialogPositioner>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Delete</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              Are you sure you want to delete this product?
-            </DialogBody>
-            <DialogFooter>
-              <Button colorScheme="red" mr={3} onClick={confirmDeleteHandler}>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>Confirm Delete</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>Are you sure you want to delete this product?</Dialog.Body>
+            <Dialog.Footer>
+              <Button colorPalette="red" mr="3" onClick={confirmDeleteHandler}>
                 Delete
               </Button>
-              <Button variant="ghost" onClick={onClose}>
+              <Button variant="ghost" onClick={() => setDialogOpen(false)}>
                 Cancel
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </DialogPositioner>
-      </DialogRoot>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </>
   );
 };

@@ -2,73 +2,78 @@ import {
   Box,
   Button,
   Flex,
+  Field,
   Grid,
   Heading,
   Image,
+  NativeSelect,
   Text,
   Textarea,
-  Field,
-  NativeSelect,
-} from "@chakra-ui/react"
+  VStack,
+  Separator,
+  Stack,
+  Badge,
+  Link,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom"
-
-import {
-  createProductReview,
-  listProductDetails,
-} from "../actions/productActions"
-import Loader from "../components/Loader"
-import Message from "../components/Message"
-import Rating from "../components/Rating"
-import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants"
+import { createProductReview, listProductDetails } from "../actions/productActions";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import Rating from "../components/Rating";
+import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants";
 
 const ProductScreen = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { id } = useParams()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [qty, setQty] = useState(1)
-  const [rating, setRating] = useState(1)
-  const [comment, setComment] = useState("")
+  const [qty, setQty] = useState(1);
+  const [rating, setRating] = useState(1);
+  const [comment, setComment] = useState("");
 
-  const productDetails = useSelector((state) => state.productDetails)
-  const { loading, error, product } = productDetails
+  const productDetails = useSelector((state) => state.productDetails);
+  const { loading, error, product } = productDetails;
 
-  const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo } = userLogin
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
-  const productReviewCreate = useSelector(
-    (state) => state.productReviewCreate
-  )
-  const { success: successProductReview, error: errorProductReview } =
-    productReviewCreate
+  const productReviewCreate = useSelector((state) => state.productReviewCreate);
+  const { success: successProductReview, error: errorProductReview } = productReviewCreate;
 
   useEffect(() => {
     if (successProductReview) {
-      alert("Review submitted")
-      setRating(1)
-      setComment("")
-      dispatch({ type: PRODUCT_REVIEW_CREATE_RESET })
+      alert("Review submitted successfully!");
+      setRating(1);
+      setComment("");
+      dispatch({ type: PRODUCT_REVIEW_CREATE_RESET });
     }
-    dispatch(listProductDetails(id))
-  }, [id, dispatch, successProductReview])
+    dispatch(listProductDetails(id));
+  }, [id, dispatch, successProductReview]);
 
   const addToCartHandler = () => {
-    navigate(`/cart/${id}?qty=${qty}`)
-  }
+    navigate(`/cart/${id}?qty=${qty}`);
+  };
 
   const submitHandler = (e) => {
-    e.preventDefault()
-    dispatch(createProductReview(id, { rating, comment }))
-  }
+    e.preventDefault();
+    dispatch(createProductReview(id, { rating, comment }));
+  };
 
   return (
     <>
       <Flex mb="5">
-        <Button as={RouterLink} to="/" colorPalette="teal" variant="outline">
-          Go Back
+        <Button
+          asChild
+          colorPalette="teal"
+          variant="outline"
+          size="sm"
+        >
+          <RouterLink to="/">
+            ← Back to Home
+          </RouterLink>
         </Button>
       </Flex>
 
@@ -76,162 +81,159 @@ const ProductScreen = () => {
         <Loader />
       ) : error ? (
         <Message type="error">{error}</Message>
-      ) : product ? (
-        <>
-          <Grid
-            templateColumns={{ sm: "1fr", md: "2fr 1fr" }}
-            gap="10"
-            py="8"
-            px="5"
-            borderRadius="lg"
-            boxShadow="md"
-            bg="white"
-          >
-            {/* Product Image */}
+      ) : (
+        <Grid
+          templateColumns={{ base: "1fr", md: "2fr 1fr" }}
+          gap="10"
+          py="8"
+          px={{ base: "2", md: "8" }}
+        >
+          {/* Product Image */}
+          <Flex align="center" justify="center" p="4">
             <Image
-              src={product?.image}
-              alt={product?.name}
-              borderRadius="md"
-              objectFit="cover"
-              boxShadow="sm"
+              src={product.image}
+              alt={product.name}
+              objectFit="contain"
+              w="100%"
+              maxH="500px"
             />
+          </Flex>
 
-            {/* Product Details */}
-            <Flex direction="column" justifyContent="space-between">
-              <Box>
-                <Heading as="h1" fontSize="3xl" mb="4" color="teal.600">
-                  {product?.name}
-                </Heading>
-                <Text fontSize="lg" color="gray.500" mb="4">
-                  {product?.brand}
-                </Text>
-                <Rating
-                  value={product?.rating}
-                  color="yellow.500"
-                  text={`${product?.numReviews || 0} reviews`}
-                  mb="4"
-                />
-                <Text fontSize="xl" fontWeight="bold" color="teal.800">
-                  ${product?.price}
-                </Text>
-                <Text mt="4" color="gray.700">
-                  {product?.description}
-                </Text>
-              </Box>
+          {/* Product Info */}
+          <Flex direction="column" justify="space-between" bg="white" p="6" rounded="lg" shadow="md" _dark={{ bg: "gray.800" }}>
+            <VStack align="flex-start" gap="4">
+              <Heading fontSize="2xl" color="teal.600">
+                {product.name}
+              </Heading>
+              <Text fontSize="lg" color="gray.600">
+                Brand: <strong>{product.brand}</strong>
+              </Text>
+              <Flex align="center">
+                <Rating value={product.rating} text={`${product.numReviews} Reviews`} />
+              </Flex>
+              <Separator />
+              <Text fontSize="2xl" fontWeight="bold" color="teal.800">
+                ₹{product.price}
+              </Text>
 
-              {/* Add to Cart Section */}
-              <Box mt="8" p="6" bg="gray.50" borderRadius="lg" boxShadow="sm">
-                <Flex justifyContent="space-between" mb="4">
-                  <Text>Price:</Text>
-                  <Text fontWeight="bold">${product?.price}</Text>
+              <Badge
+                colorPalette={product.countInStock > 0 ? "green" : "red"}
+                fontSize="md"
+                p="1"
+                borderRadius="md"
+              >
+                {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
+              </Badge>
+
+              <Text mt="4" color="gray.700" lineHeight="1.6" _dark={{ color: "gray.300" }}>
+                {product.description}
+              </Text>
+            </VStack>
+
+            {/* Cart Interaction */}
+            <Box mt="8">
+              {product.countInStock > 0 && (
+                <Flex align="center" mb="4">
+                  <Text mr="4">Qty:</Text>
+                  <NativeSelect.Root
+                    value={qty}
+                    onValueChange={({ value }) => setQty(value)}
+                    maxW="100px"
+                  >
+                    <NativeSelect.Field borderColor="teal.500">
+                      {[...Array(product.countInStock).keys()].map((x) => (
+                        <option key={x + 1} value={x + 1}>
+                          {x + 1}
+                        </option>
+                      ))}
+                    </NativeSelect.Field>
+                  </NativeSelect.Root>
                 </Flex>
-                <Flex justifyContent="space-between" mb="4">
-                  <Text>Status:</Text>
-                  <Text fontWeight="bold">
-                    {product?.countInStock > 0 ? "In Stock" : "Out of Stock"}
-                  </Text>
-                </Flex>
-                {product?.countInStock > 0 && (
-                  <Flex justifyContent="space-between" mb="4">
-                    <Text>Qty:</Text>
-                    <NativeSelect.Root 
-                      value={qty} 
-                      onValueChange={(e) => setQty(Number(e.value))}
-                      width="30%"
-                    >
-                      <NativeSelect.Field>
-                        {[...Array(product?.countInStock).keys()].map((i) => (
-                          <option value={i + 1} key={i + 1}>
-                            {i + 1}
-                          </option>
-                        ))}
-                      </NativeSelect.Field>
-                    </NativeSelect.Root>
-                  </Flex>
-                )}
-                <Button
-                  width="100%"
-                  colorPalette="teal"
-                  disabled={product?.countInStock === 0}
-                  onClick={addToCartHandler}
-                >
-                  Add to Cart
-                </Button>
-              </Box>
-            </Flex>
-          </Grid>
+              )}
+              <Button
+                colorPalette="teal"
+                width="full"
+                onClick={addToCartHandler}
+                disabled={product.countInStock === 0}
+                size="lg"
+                _hover={{ bg: "teal.600" }}
+              >
+                {product.countInStock > 0 ? "Add to Cart" : "Out of Stock"}
+              </Button>
+            </Box>
+          </Flex>
+        </Grid>
+      )}
 
-          {/* Review Section */}
-          <Box mt="10" p="6" bg="white" borderRadius="lg" boxShadow="sm">
-            <Heading as="h3" size="lg" mb="6">
-              Write a Review
-            </Heading>
+      {/* Review Section */}
+      {!loading && !error && (
+        <Box mt="12" p={{ base: "4", md: "8" }} bg="white" borderRadius="lg" boxShadow="md" _dark={{ bg: "gray.800" }}>
+          <Heading as="h3" size="lg" mb="6" color="teal.700">
+            Customer Reviews
+          </Heading>
 
-            {product?.reviews?.length === 0 ? (
-              <Message>No Reviews</Message>
-            ) : (
-              product?.reviews?.map((review) => (
-                <Box
-                  key={review._id}
-                  p="4"
-                  borderBottom="1px"
-                  borderColor="gray.200"
-                  mb="4"
-                >
-                  <Flex justifyContent="space-between" alignItems="center">
+          {product.reviews.length === 0 ? (
+            <Message>No Reviews Yet</Message>
+          ) : (
+            <Stack gap="6">
+              {product.reviews.map((review) => (
+                <Box key={review._id} p="4" bg="gray.50" borderRadius="md" shadow="sm" _dark={{ bg: "gray.700" }}>
+                  <Flex justify="space-between" align="center" mb="2">
                     <Text fontWeight="bold">{review.name}</Text>
                     <Rating value={review.rating} />
                   </Flex>
-                  <Text mt="2" color="gray.600">
-                    {review.comment}
-                  </Text>
+                  <Text color="gray.600" _dark={{ color: "gray.300" }}>{review.comment}</Text>
                 </Box>
-              ))
-            )}
+              ))}
+            </Stack>
+          )}
 
-            {errorProductReview && (
-              <Message type="error">{errorProductReview}</Message>
-            )}
+          <Box mt="8">
+            {errorProductReview && <Message type="error">{errorProductReview}</Message>}
 
             {userInfo ? (
               <form onSubmit={submitHandler}>
-                <Field.Root mb="4">
-                  <Field.Label>Rating</Field.Label>
-                  <NativeSelect.Root 
-                    value={rating} 
-                    onValueChange={(e) => setRating(Number(e.value))}
-                  >
-                    <NativeSelect.Field placeholder="Select Option">
-                      <option value="1">1 - Poor</option>
-                      <option value="2">2 - Okay</option>
-                      <option value="3">3 - Good</option>
-                      <option value="4">4 - Very Good</option>
-                      <option value="5">5 - Excellent</option>
-                    </NativeSelect.Field>
-                  </NativeSelect.Root>
-                </Field.Root>
+                <Stack gap="4">
+                  <Field.Root id="rating">
+                    <Field.Label>Rating</Field.Label>
+                    <NativeSelect.Root
+                      value={rating}
+                      onValueChange={({ value }) => setRating(value)}
+                    >
+                      <NativeSelect.Field placeholder="Select Rating">
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                      </NativeSelect.Field>
+                    </NativeSelect.Root>
+                  </Field.Root>
 
-                <Field.Root mb="4">
-                  <Field.Label>Comment</Field.Label>
-                  <Textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Write your review here..."
-                  />
-                </Field.Root>
+                  <Field.Root id="comment">
+                    <Field.Label>Comment</Field.Label>
+                    <Textarea
+                      placeholder="Write your review..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    />
+                  </Field.Root>
 
-                <Button type="submit" colorPalette="teal">
-                  Submit Review
-                </Button>
+                  <Button type="submit" colorPalette="teal">
+                    Submit Review
+                  </Button>
+                </Stack>
               </form>
             ) : (
-              <Message>Please log in to write a review</Message>
+              <Message>
+                Please <Link asChild color="teal.500"><RouterLink to="/login">login</RouterLink></Link> to write a review
+              </Message>
             )}
           </Box>
-        </>
-      ): null}
+        </Box>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default ProductScreen
+export default ProductScreen;
