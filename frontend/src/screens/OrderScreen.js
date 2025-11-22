@@ -8,7 +8,7 @@ import {
   Link,
   Text,
   VStack,
-  Separator,
+  Separator, // <- updated
 } from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
@@ -40,9 +40,6 @@ const OrderScreen = () => {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  // Get PayPal client ID from environment variables
-  const paypalClientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
 
   useEffect(() => {
     dispatch({ type: ORDER_PAY_RESET });
@@ -144,31 +141,27 @@ const OrderScreen = () => {
           {!order.isPaid && (
             <Box mt="8">
               {loadingPay ? <Loader /> : (
-                paypalClientId ? (
-                  <PayPalScriptProvider options={{"client-id": paypalClientId, components: "buttons"}}>
-                    <PayPalButtons
-                      createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
-                      onApprove={(data, actions) => actions.order.capture().then((details) => {
-                        const paymentResult = {
-                          id: details.id,
-                          status: details.status,
-                          update_time: details.update_time,
-                          email_address: details.payer.email_address,
-                        };
-                        successPaymentHandler(paymentResult);
-                      })}
-                    />
-                  </PayPalScriptProvider>
-                ) : (
-                  <Message type="error">PayPal configuration missing. Please contact support.</Message>
-                )
+                <PayPalScriptProvider options={{"client-id": "AZwy0oygiOxgjdxigvPhJ5pzAthzW82-Th3lX70dQaxG7as0HFSvDswmv9N0bfCjraJO6nyw78j7lWWS", components: "buttons"}}>
+                  <PayPalButtons
+                    createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
+                    onApprove={(data, actions) => actions.order.capture().then((details) => {
+                      const paymentResult = {
+                        id: details.id,
+                        status: details.status,
+                        update_time: details.update_time,
+                        email_address: details.payer.email_address,
+                      };
+                      successPaymentHandler(paymentResult);
+                    })}
+                  />
+                </PayPalScriptProvider>
               )}
             </Box>
           )}
 
           {loadingDeliver && <Loader />}
           {userInfo && userInfo.isAdmin && !order.isDelivered && (
-            <Button mt="6" w="full" colorPalette="teal" onClick={deliverHandler} size="lg">Mark as Delivered</Button>
+            <Button mt="6" w="full" colorScheme="teal" onClick={deliverHandler} size="lg">Mark as Delivered</Button>
           )}
         </Box>
       </Grid>
