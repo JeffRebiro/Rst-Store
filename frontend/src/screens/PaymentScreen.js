@@ -76,20 +76,24 @@ const PaymentScreen = () => {
                 </Field.Label>
                 <RadioGroup.Root
                   value={paymentMethodRadio}
-                  onValueChange={setPaymentMethodRadio}
+                  onValueChange={({ value }) => setPaymentMethodRadio(value)}
                 >
                   <VStack align="start" gap="4">
                     <RadioGroup.Item value="paypal">
-                      <RadioGroup.ItemHiddenInput />
-                      <RadioGroup.ItemIndicator />
+                      <RadioGroup.ItemInput />
+                      <RadioGroup.ItemControl>
+                        <RadioGroup.ItemIndicator />
+                      </RadioGroup.ItemControl>
                       <RadioGroup.ItemText>
                         PayPal or Credit/Debit Card
                       </RadioGroup.ItemText>
                     </RadioGroup.Item>
                     {/* Additional payment options can be added here */}
                     {/* <RadioGroup.Item value="stripe">
-                      <RadioGroup.ItemHiddenInput />
-                      <RadioGroup.ItemIndicator />
+                      <RadioGroup.ItemInput />
+                      <RadioGroup.ItemControl>
+                        <RadioGroup.ItemIndicator />
+                      </RadioGroup.ItemControl>
                       <RadioGroup.ItemText>
                         Stripe
                       </RadioGroup.ItemText>
