@@ -8,7 +8,6 @@ import {
   Text,
   Stack,
   Dialog,
-  Field,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { IoAdd, IoPencilSharp, IoTrashBinSharp, IoSearch } from "react-icons/io5";
@@ -102,27 +101,25 @@ const ProductListScreen = () => {
         </Button>
       </Flex>
 
-      {/* Search Input with Field.Addon */}
-      <Field.Root mb="4">
-        <Field.Addon>
-          <Input
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Box
-            css={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 12px",
-              color: "gray.500"
-            }}
-          >
-            <IoSearch />
-          </Box>
-        </Field.Addon>
-      </Field.Root>
+      {/* Search Input - Simple approach */}
+      <Box position="relative" mb="4" maxWidth="400px">
+        <Input
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          paddingRight="3rem"
+        />
+        <Box
+          position="absolute"
+          right="0.75rem"
+          top="50%"
+          transform="translateY(-50%)"
+          color="gray.500"
+          pointerEvents="none"
+        >
+          <IoSearch />
+        </Box>
+      </Box>
 
       {loadingDelete && <Loader />}
       {errorDelete && <Message type="error">{errorDelete}</Message>}
