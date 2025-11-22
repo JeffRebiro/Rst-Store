@@ -1,6 +1,9 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
+// Test Loader first
+import Loader from "../components/Loader";
+
 const ProductScreen = () => {
   const { id } = useParams();
 
@@ -11,7 +14,7 @@ const ProductScreen = () => {
       </Flex>
       <Box>
         <Text>Product ID: {id}</Text>
-        <Text>Minimal test - no components</Text>
+        <Loader />
       </Box>
     </>
   );
