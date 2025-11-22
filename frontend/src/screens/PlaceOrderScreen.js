@@ -7,7 +7,7 @@ import {
   Image,
   Link,
   Text,
-  Separator, // <-- Updated
+  Separator,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,44 +21,64 @@ import Message from "../components/Message";
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { theme } = useNextTheme(); // 'light' or 'dark'
+  const { theme } = useNextTheme();
   const isLight = theme === "light";
 
   const cart = useSelector((state) => state.cart);
 
   // Calculate prices
-  cart.itemsPrice = cart.cartItems.reduce(
+  const itemsPrice = cart.cartItems.reduce(
     (acc, currVal) => acc + currVal.price * +currVal.qty,
     0
   );
-  cart.shippingPrice = cart.itemsPrice < 10000 ? 5000 : 0;
-  cart.taxPrice = (18 * cart.itemsPrice) / 100;
-  cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
+  const shippingPrice = itemsPrice < 10000 ? 5000 : 0;
+  const taxPrice = (18 * itemsPrice) / 100;
+  const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
   const orderCreate = useSelector((state) => state.orderCreate);
-  const { order, success } = orderCreate;
+  const { order, success, error, loading } = orderCreate;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   const placeOrderHandler = () => {
+    // Validate shipping address has country
+    if (!cart.shippingAddress || !cart.shippingAddress.country) {
+      alert('Please complete the shipping address first');
+      navigate('/shipping');
+      return;
+    }
+
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
         shippingAddress: cart.shippingAddress,
         paymentMethod: cart.paymentMethod,
-        itemsPrice: cart.itemsPrice,
-        shippingPrice: cart.shippingPrice,
-        taxPrice: cart.taxPrice,
-        totalPrice: cart.totalPrice,
+        itemsPrice: itemsPrice,
+        shippingPrice: shippingPrice,
+        taxPrice: taxPrice,
+        totalPrice: totalPrice,
       })
     );
   };
 
   useEffect(() => {
-    if (!userInfo) navigate("/login");
-    if (success) navigate(`/order/${order._id}`);
-  }, [navigate, success, order, userInfo]);
+    if (!userInfo) {
+      navigate("/login");
+      return;
+    }
+    if (!cart.shippingAddress) {
+      navigate("/shipping");
+      return;
+    }
+    if (!cart.paymentMethod) {
+      navigate("/payment");
+      return;
+    }
+    if (success && order) {
+      navigate(`/order/${order._id}`);
+    }
+  }, [navigate, success, order, userInfo, cart.shippingAddress, cart.paymentMethod]);
 
   const boxBg = isLight ? "white" : "gray.700";
   const borderColor = isLight ? "gray.200" : "gray.600";
@@ -76,8 +96,8 @@ const PlaceOrderScreen = () => {
             </Heading>
             <Text>
               <strong>Address: </strong>
-              {cart.shippingAddress.address}, {cart.shippingAddress.city},{" "}
-              {cart.shippingAddress.postalCode}, {cart.shippingAddress.country}
+              {cart.shippingAddress?.address}, {cart.shippingAddress?.city},{" "}
+              {cart.shippingAddress?.postalCode}, {cart.shippingAddress?.country}
             </Text>
           </Box>
 
@@ -87,7 +107,7 @@ const PlaceOrderScreen = () => {
               Payment Method
             </Heading>
             <Text>
-              <strong>Method: </strong> {cart.paymentMethod.toUpperCase()}
+              <strong>Method: </strong> {cart.paymentMethod?.toUpperCase()}
             </Text>
           </Box>
 
@@ -111,10 +131,11 @@ const PlaceOrderScreen = () => {
                       <Image
                         src={item.image}
                         alt={item.name}
-                        w="12"
-                        h="12"
+                        width="12"
+                        height="12"
                         objectFit="cover"
-                        mr="4"
+                        marginRight="4"
+                        borderRadius="md"
                       />
                       <Link
                         as={RouterLink}
@@ -139,9 +160,9 @@ const PlaceOrderScreen = () => {
         {/* Column 2 - Order Summary */}
         <Flex
           direction="column"
-          bgColor={boxBg}
-          shadow="lg"
-          rounded="lg"
+          backgroundColor={boxBg}
+          boxShadow="lg"
+          borderRadius="lg"
           py="8"
           px="6"
           justifyContent="space-between"
@@ -156,43 +177,50 @@ const PlaceOrderScreen = () => {
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Items</Text>
               <Text fontWeight="bold" fontSize="lg">
-                ${cart.itemsPrice}
+                ${itemsPrice.toFixed(2)}
               </Text>
             </Flex>
             <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Shipping</Text>
               <Text fontWeight="bold" fontSize="lg">
-                ${cart.shippingPrice}
+                ${shippingPrice.toFixed(2)}
               </Text>
             </Flex>
             <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Tax</Text>
               <Text fontWeight="bold" fontSize="lg">
-                ${cart.taxPrice}
+                ${taxPrice.toFixed(2)}
               </Text>
             </Flex>
             <Separator borderColor={borderColor} />
             <Flex justifyContent="space-between" py="2">
               <Text fontSize="lg">Total</Text>
               <Text fontWeight="bold" fontSize="lg">
-                ${cart.totalPrice}
+                ${totalPrice.toFixed(2)}
               </Text>
             </Flex>
           </Box>
 
+          {error && (
+            <Message type="error" mb="4">
+              {error}
+            </Message>
+          )}
+
           <Button
             size="lg"
-            colorScheme="teal"
-            w="full"
+            colorPalette="teal" // Updated from colorScheme
+            width="full"
             mt="6"
             textTransform="uppercase"
             onClick={placeOrderHandler}
-            isDisabled={cart.cartItems.length === 0}
+            disabled={cart.cartItems.length === 0 || loading} // Updated from isDisabled
             _hover={{ bg: "teal.600" }}
+            loading={loading} // Show loading state
           >
-            Place Order
+            {loading ? "Placing Order..." : "Place Order"}
           </Button>
         </Flex>
       </Grid>
