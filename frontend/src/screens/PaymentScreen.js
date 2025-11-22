@@ -5,13 +5,11 @@ import {
   VStack,
   Box,
   RadioGroup,
-  Text,
-  HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTheme as useNextTheme } from "next-themes";
+import { useTheme } from "next-themes";
 
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
@@ -20,7 +18,7 @@ import FormContainer from "../components/FormContainer";
 const PaymentScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { theme } = useNextTheme();
+  const { theme } = useTheme();
   const isLight = theme === "light";
 
   const cart = useSelector((state) => state.cart);
@@ -38,13 +36,6 @@ const PaymentScreen = () => {
     if (!shippingAddress) navigate("/shipping");
   }, [navigate, shippingAddress, userInfo]);
 
-  // Safe function to format payment method for display
-  const formatPaymentMethod = (method) => {
-    if (!method) return "PayPal";
-    if (typeof method !== 'string') return "PayPal";
-    return method.replace('_', ' ').toUpperCase();
-  };
-
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(savePaymentMethod(paymentMethodRadio));
@@ -58,7 +49,7 @@ const PaymentScreen = () => {
           bg={isLight ? "white" : "gray.700"}
           boxShadow="lg"
           p="8"
-          borderRadius="lg"
+          rounded="lg"
         >
           <CheckoutSteps step1 step2 step3 />
 
@@ -66,108 +57,22 @@ const PaymentScreen = () => {
             Select Payment Method
           </Heading>
 
-          {/* Show selected method prominently */}
-          <Box 
-            bg="teal.50" 
-            border="2px solid" 
-            borderColor="teal.200"
-            p="4" 
-            borderRadius="md" 
-            mb="6"
-            textAlign="center"
-          >
-            <Text fontWeight="bold" color="teal.700" fontSize="lg">
-              Selected: {formatPaymentMethod(paymentMethodRadio)}
-            </Text>
-          </Box>
-
           <form onSubmit={submitHandler}>
-            <VStack spacing="6" align="stretch">
+            <VStack gap="6" align="stretch">
               <RadioGroup.Root
                 value={paymentMethodRadio}
                 onValueChange={setPaymentMethodRadio}
               >
-                <VStack align="start" spacing="4">
-                  {/* PayPal Option */}
-                  <Box
-                    as="label"
-                    cursor="pointer"
-                    p="4"
-                    borderRadius="lg"
-                    border="2px solid"
-                    borderColor={paymentMethodRadio === "paypal" ? "teal.500" : "gray.200"}
-                    bg={paymentMethodRadio === "paypal" ? "teal.50" : "transparent"}
-                    transition="all 0.2s"
-                    _hover={{ borderColor: "teal.300", bg: "teal.50" }}
-                    width="100%"
-                  >
-                    <RadioGroup.Item value="paypal">
-                      <RadioGroup.ItemHiddenInput />
-                      <HStack align="center" spacing="3">
-                        <RadioGroup.ItemIndicator />
-                        <Box flex="1">
-                          <Text fontWeight="bold" fontSize="lg">
-                            PayPal 
-                          </Text>
-                          
-                        </Box>
-                      </HStack>
-                    </RadioGroup.Item>
-                  </Box>
-
-                  {/* Stripe Option */}
-                  <Box
-                    as="label"
-                    cursor="pointer"
-                    p="4"
-                    borderRadius="lg"
-                    border="2px solid"
-                    borderColor={paymentMethodRadio === "stripe" ? "teal.500" : "gray.200"}
-                    bg={paymentMethodRadio === "stripe" ? "teal.50" : "transparent"}
-                    transition="all 0.2s"
-                    _hover={{ borderColor: "teal.300", bg: "teal.50" }}
-                    width="100%"
-                  >
-                    <RadioGroup.Item value="stripe">
-                      <RadioGroup.ItemHiddenInput />
-                      <HStack align="center" spacing="3">
-                        <RadioGroup.ItemIndicator />
-                        <Box flex="1">
-                          <Text fontWeight="bold" fontSize="lg">
-                            Stripe
-                          </Text>
-                          
-                        </Box>
-                      </HStack>
-                    </RadioGroup.Item>
-                  </Box>
-
-                  {/* Bank Transfer Option */}
-                  <Box
-                    as="label"
-                    cursor="pointer"
-                    p="4"
-                    borderRadius="lg"
-                    border="2px solid"
-                    borderColor={paymentMethodRadio === "bank_transfer" ? "teal.500" : "gray.200"}
-                    bg={paymentMethodRadio === "bank_transfer" ? "teal.50" : "transparent"}
-                    transition="all 0.2s"
-                    _hover={{ borderColor: "teal.300", bg: "teal.50" }}
-                    width="100%"
-                  >
-                    <RadioGroup.Item value="bank_transfer">
-                      <RadioGroup.ItemHiddenInput />
-                      <HStack align="center" spacing="3">
-                        <RadioGroup.ItemIndicator />
-                        <Box flex="1">
-                          <Text fontWeight="bold" fontSize="lg">
-                            Bank Transfer
-                          </Text>
-                          
-                        </Box>
-                      </HStack>
-                    </RadioGroup.Item>
-                  </Box>
+                <VStack align="start" gap="4">
+                  <RadioGroup.Item value="paypal">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemControl>
+                      <RadioGroup.ItemIndicator />
+                    </RadioGroup.ItemControl>
+                    <RadioGroup.ItemText>
+                      PayPal or Credit/Debit Card
+                    </RadioGroup.ItemText>
+                  </RadioGroup.Item>
                 </VStack>
               </RadioGroup.Root>
 
@@ -177,9 +82,8 @@ const PaymentScreen = () => {
                 size="lg"
                 width="full"
                 mt="4"
-                _hover={{ bg: "teal.600" }}
               >
-                Continue with {formatPaymentMethod(paymentMethodRadio)}
+                Continue
               </Button>
             </VStack>
           </form>
