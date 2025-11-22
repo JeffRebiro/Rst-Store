@@ -27,7 +27,17 @@ export const createOrder = (order) => async (dispatch, getState) => {
 
     const {
       userLogin: { userInfo },
+      cart: { cartItems, shippingAddress }, // Add shippingAddress from cart state
     } = getState();
+
+    console.log('Shipping address from Redux:', shippingAddress); // Debug log
+    console.log('Order data passed:', order); // Debug log
+
+    // Validate that shipping address has all required fields
+    if (!shippingAddress || !shippingAddress.country) {
+      throw new Error('Shipping address is incomplete. Please fill in all shipping details.');
+    }
+
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
@@ -35,7 +45,20 @@ export const createOrder = (order) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post("/api/orders", order, config);
+    // Combine the order data with shipping address and cart items
+    const orderData = {
+      ...order,
+      orderItems: cartItems,
+      shippingAddress: shippingAddress,
+      itemsPrice: order.itemsPrice,
+      taxPrice: order.taxPrice,
+      shippingPrice: order.shippingPrice,
+      totalPrice: order.totalPrice,
+    };
+
+    console.log('Final order data being sent:', orderData); // Debug log
+
+    const { data } = await axios.post("/api/orders", orderData, config);
     dispatch({ type: ORDER_CREATE_SUCCESS, payload: data });
   } catch (err) {
     dispatch({

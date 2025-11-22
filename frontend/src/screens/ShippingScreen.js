@@ -6,7 +6,6 @@ import {
   Box,
   Heading,
   Text,
-  NativeSelect,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -45,7 +44,7 @@ const ShippingScreen = () => {
     
     // Validate that all fields are filled
     if (!address || !city || !postalCode || !country) {
-      alert('Please fill in all fields');
+      alert('Please fill in all fields, including country');
       return;
     }
 
@@ -53,12 +52,6 @@ const ShippingScreen = () => {
     
     dispatch(saveShippingAddress({ address, city, postalCode, country }));
     navigate("/payment");
-  };
-
-  const handleCountryChange = (e) => {
-    const selectedCountry = e.value;
-    console.log('Country selected:', selectedCountry);
-    setCountry(selectedCountry);
   };
 
   return (
@@ -121,27 +114,35 @@ const ShippingScreen = () => {
               />
             </Box>
 
-            {/* Country Field */}
+            {/* Country Field - Using regular HTML select */}
             <Box>
               <Text as="label" display="block" mb="2" fontWeight="medium">
                 Country
               </Text>
-              <NativeSelect.Root
+              <Box
+                as="select"
                 value={country}
-                onValueChange={handleCountryChange}
+                onChange={(e) => setCountry(e.target.value)}
+                width="100%"
+                height="40px"
+                padding="8px 12px"
+                border="2px solid"
+                borderColor="gray.200"
+                borderRadius="6px"
+                fontSize="16px"
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px teal.500",
+                }}
+                required
               >
-                <NativeSelect.Field 
-                  placeholder="Select your country"
-                  focusBorderColor="teal.500"
-                >
-                  <option value="">Select your country</option>
-                  {countries.map((countryOption) => (
-                    <option key={countryOption} value={countryOption}>
-                      {countryOption}
-                    </option>
-                  ))}
-                </NativeSelect.Field>
-              </NativeSelect.Root>
+                <option value="">Select your country</option>
+                {countries.map((countryOption) => (
+                  <option key={countryOption} value={countryOption}>
+                    {countryOption}
+                  </option>
+                ))}
+              </Box>
             </Box>
 
             {/* Submit Button */}
@@ -151,6 +152,7 @@ const ShippingScreen = () => {
               size="lg"
               w="full"
               _hover={{ bg: "teal.600" }}
+              disabled={!address || !city || !postalCode || !country}
             >
               Continue
             </Button>
