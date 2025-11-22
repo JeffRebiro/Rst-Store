@@ -9,7 +9,6 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTheme as useNextTheme } from "next-themes";
 
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
@@ -18,8 +17,6 @@ import FormContainer from "../components/FormContainer";
 const PaymentScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { theme } = useNextTheme();
-  const isLight = theme === "light";
 
   const cart = useSelector((state) => state.cart);
   const { shippingAddress, paymentMethod } = cart;
@@ -28,7 +25,7 @@ const PaymentScreen = () => {
   const { userInfo } = userLogin;
 
   const [paymentMethodRadio, setPaymentMethodRadio] = useState(
-    paymentMethod || "paypal"
+    paymentMethod || "PayPal"
   );
 
   useEffect(() => {
@@ -46,10 +43,10 @@ const PaymentScreen = () => {
     <Flex w="full" alignItems="center" justifyContent="center" py="10">
       <FormContainer>
         <Box
-          bg={isLight ? "white" : "gray.700"}
+          bg="white"
           boxShadow="lg"
           p="8"
-          rounded="lg"
+          borderRadius="lg"
         >
           <CheckoutSteps step1 step2 step3 />
 
@@ -64,9 +61,11 @@ const PaymentScreen = () => {
                 onValueChange={setPaymentMethodRadio}
               >
                 <VStack align="start" spacing="4">
-                  <RadioGroup.Item value="paypal">
+                  <RadioGroup.Item value="PayPal">
                     <RadioGroup.ItemHiddenInput />
-                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemControl>
+                      <RadioGroup.ItemIndicator />
+                    </RadioGroup.ItemControl>
                     <RadioGroup.ItemText>
                       PayPal or Credit/Debit Card
                     </RadioGroup.ItemText>
@@ -76,7 +75,7 @@ const PaymentScreen = () => {
 
               <Button
                 type="submit"
-                colorScheme="teal"
+                colorPalette="teal"
                 size="lg"
                 width="full"
                 mt="4"

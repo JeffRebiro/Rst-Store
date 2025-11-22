@@ -8,7 +8,7 @@ import {
   Link,
   Text,
   VStack,
-  Separator, // <- updated
+  Separator,
 } from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
@@ -40,6 +40,9 @@ const OrderScreen = () => {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+
+  // Get PayPal client ID from environment variables
+  const paypalClientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
 
   useEffect(() => {
     dispatch({ type: ORDER_PAY_RESET });
@@ -141,27 +144,31 @@ const OrderScreen = () => {
           {!order.isPaid && (
             <Box mt="8">
               {loadingPay ? <Loader /> : (
-                <PayPalScriptProvider options={{"client-id": "YOUR_CLIENT_ID_HERE", components: "buttons"}}>
-                  <PayPalButtons
-                    createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
-                    onApprove={(data, actions) => actions.order.capture().then((details) => {
-                      const paymentResult = {
-                        id: details.id,
-                        status: details.status,
-                        update_time: details.update_time,
-                        email_address: details.payer.email_address,
-                      };
-                      successPaymentHandler(paymentResult);
-                    })}
-                  />
-                </PayPalScriptProvider>
+                paypalClientId ? (
+                  <PayPalScriptProvider options={{"client-id": paypalClientId, components: "buttons"}}>
+                    <PayPalButtons
+                      createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
+                      onApprove={(data, actions) => actions.order.capture().then((details) => {
+                        const paymentResult = {
+                          id: details.id,
+                          status: details.status,
+                          update_time: details.update_time,
+                          email_address: details.payer.email_address,
+                        };
+                        successPaymentHandler(paymentResult);
+                      })}
+                    />
+                  </PayPalScriptProvider>
+                ) : (
+                  <Message type="error">PayPal configuration missing. Please contact support.</Message>
+                )
               )}
             </Box>
           )}
 
           {loadingDeliver && <Loader />}
           {userInfo && userInfo.isAdmin && !order.isDelivered && (
-            <Button mt="6" w="full" colorScheme="teal" onClick={deliverHandler} size="lg">Mark as Delivered</Button>
+            <Button mt="6" w="full" colorPalette="teal" onClick={deliverHandler} size="lg">Mark as Delivered</Button>
           )}
         </Box>
       </Grid>
