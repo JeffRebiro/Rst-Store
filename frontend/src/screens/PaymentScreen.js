@@ -3,11 +3,9 @@ import {
   Flex,
   Field,
   Heading,
-  RadioGroup,
   VStack,
   Box,
   Text,
-  Radio,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,6 +45,61 @@ const PaymentScreen = () => {
     navigate("/placeorder");
   };
 
+  // Custom radio option component
+  const RadioOption = ({ value, label, isSelected, onChange }) => (
+    <Box
+      as="label"
+      display="flex"
+      alignItems="center"
+      gap="3"
+      p="3"
+      border="2px solid"
+      borderColor={isSelected ? "teal.500" : "gray.200"}
+      borderRadius="md"
+      cursor="pointer"
+      bg={isSelected ? "teal.50" : "transparent"}
+      _hover={{ borderColor: "teal.300" }}
+      _dark={{
+        borderColor: isSelected ? "teal.300" : "gray.600",
+        bg: isSelected ? "teal.900" : "transparent",
+      }}
+    >
+      <Box
+        width="4"
+        height="4"
+        borderRadius="full"
+        border="2px solid"
+        borderColor={isSelected ? "teal.500" : "gray.400"}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        _dark={{
+          borderColor: isSelected ? "teal.300" : "gray.400",
+        }}
+      >
+        {isSelected && (
+          <Box
+            width="2"
+            height="2"
+            borderRadius="full"
+            bg="teal.500"
+            _dark={{ bg: "teal.300" }}
+          />
+        )}
+      </Box>
+      <input
+        type="radio"
+        value={value}
+        checked={isSelected}
+        onChange={() => onChange(value)}
+        style={{ display: 'none' }}
+      />
+      <Text fontSize="lg" fontWeight="medium">
+        {label}
+      </Text>
+    </Box>
+  );
+
   return (
     <Flex direction="column" w="full" alignItems="center" justifyContent="center" py="10" bg="gray.50">
       <FormContainer>
@@ -72,20 +125,24 @@ const PaymentScreen = () => {
             <VStack gap="6" align="stretch">
               {/* Payment Method Options */}
               <Field.Root required>
-                <Field.Label fontWeight="semibold" fontSize="lg">
+                <Field.Label fontWeight="semibold" fontSize="lg" mb="4">
                   Choose your payment method
                 </Field.Label>
-                <RadioGroup value={paymentMethodRadio} onValueChange={setPaymentMethodRadio}>
-                  <VStack align="start" gap="4">
-                    <Radio value="paypal" size="lg">
-                      PayPal or Credit/Debit Card
-                    </Radio>
-                    {/* Additional payment options can be added here */}
-                    {/* <Radio value="stripe" size="lg">
-                      Stripe
-                    </Radio> */}
-                  </VStack>
-                </RadioGroup>
+                <VStack align="stretch" gap="3">
+                  <RadioOption
+                    value="paypal"
+                    label="PayPal or Credit/Debit Card"
+                    isSelected={paymentMethodRadio === "paypal"}
+                    onChange={setPaymentMethodRadio}
+                  />
+                  {/* Additional payment options can be added here */}
+                  {/* <RadioOption
+                    value="stripe"
+                    label="Stripe"
+                    isSelected={paymentMethodRadio === "stripe"}
+                    onChange={setPaymentMethodRadio}
+                  /> */}
+                </VStack>
               </Field.Root>
 
               {/* Submit Button */}
