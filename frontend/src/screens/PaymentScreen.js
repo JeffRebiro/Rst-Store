@@ -1,15 +1,16 @@
 import {
   Button,
   Flex,
+  Field,
   Heading,
+  RadioGroup,
   VStack,
   Box,
-  RadioGroup,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "next-themes";
 
 import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
@@ -18,8 +19,6 @@ import FormContainer from "../components/FormContainer";
 const PaymentScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { theme } = useTheme();
-  const isLight = theme === "light";
 
   const cart = useSelector((state) => state.cart);
   const { shippingAddress, paymentMethod } = cart;
@@ -32,8 +31,13 @@ const PaymentScreen = () => {
   );
 
   useEffect(() => {
-    if (!userInfo) navigate("/login");
-    if (!shippingAddress) navigate("/shipping");
+    if (!userInfo) {
+      navigate("/login");
+    }
+
+    if (!shippingAddress) {
+      navigate("/shipping");
+    }
   }, [navigate, shippingAddress, userInfo]);
 
   const submitHandler = (e) => {
@@ -43,50 +47,79 @@ const PaymentScreen = () => {
   };
 
   return (
-    <Flex w="full" alignItems="center" justifyContent="center" py="10">
+    <Flex direction="column" w="full" alignItems="center" justifyContent="center" py="10" bg="gray.50">
       <FormContainer>
         <Box
-          bg={isLight ? "white" : "gray.700"}
+          bg="white"
           boxShadow="lg"
           p="8"
           rounded="lg"
+          w="full"
+          maxW="lg"
+          _dark={{ bg: "gray.700" }}
         >
+          {/* Checkout Steps */}
           <CheckoutSteps step1 step2 step3 />
 
-          <Heading as="h2" mb="6" fontSize="2xl" textAlign="center">
-            Select Payment Method
+          {/* Heading */}
+          <Heading as="h2" mb="6" fontSize="2xl" fontWeight="bold" textAlign="center">
+            Make your Payment
           </Heading>
 
+          {/* Payment Form */}
           <form onSubmit={submitHandler}>
             <VStack gap="6" align="stretch">
-              <RadioGroup.Root
-                value={paymentMethodRadio}
-                onValueChange={setPaymentMethodRadio}
-              >
-                <VStack align="start" gap="4">
-                  <RadioGroup.Item value="paypal">
-                    <RadioGroup.ItemHiddenInput />
-                    <RadioGroup.ItemControl>
+              {/* Payment Method Options */}
+              <Field.Root required>
+                <Field.Label fontWeight="semibold" fontSize="lg">
+                  Choose your payment method
+                </Field.Label>
+                <RadioGroup.Root
+                  value={paymentMethodRadio}
+                  onValueChange={setPaymentMethodRadio}
+                >
+                  <VStack align="start" gap="4">
+                    <RadioGroup.Item value="paypal">
+                      <RadioGroup.ItemHiddenInput />
                       <RadioGroup.ItemIndicator />
-                    </RadioGroup.ItemControl>
-                    <RadioGroup.ItemText>
-                      PayPal or Credit/Debit Card
-                    </RadioGroup.ItemText>
-                  </RadioGroup.Item>
-                </VStack>
-              </RadioGroup.Root>
+                      <RadioGroup.ItemText>
+                        PayPal or Credit/Debit Card
+                      </RadioGroup.ItemText>
+                    </RadioGroup.Item>
+                    {/* Additional payment options can be added here */}
+                    {/* <RadioGroup.Item value="stripe">
+                      <RadioGroup.ItemHiddenInput />
+                      <RadioGroup.ItemIndicator />
+                      <RadioGroup.ItemText>
+                        Stripe
+                      </RadioGroup.ItemText>
+                    </RadioGroup.Item> */}
+                  </VStack>
+                </RadioGroup.Root>
+              </Field.Root>
 
+              {/* Submit Button */}
               <Button
                 type="submit"
                 colorPalette="teal"
                 size="lg"
                 width="full"
                 mt="4"
+                _hover={{ bg: "teal.600" }}
+                disabled={!paymentMethodRadio}
               >
                 Continue
               </Button>
             </VStack>
           </form>
+
+          {/* Disclaimer / Additional Information */}
+          <Box mt="6" textAlign="center" color="gray.500">
+            <Text fontSize="sm">
+              By proceeding, you agree to our{" "}
+              <strong>Terms & Conditions</strong>.
+            </Text>
+          </Box>
         </Box>
       </FormContainer>
     </Flex>
