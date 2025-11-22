@@ -21,19 +21,6 @@ import {
 } from "../actions/productActions";
 import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants";
 
-// Inline Loader component only
-const Loader = () => (
-  <Flex alignItems="center" justifyContent="center">
-    <Spinner
-      thickness="4px"
-      speed="0.65s"
-      emptyColor="gray.200"
-      color="blue.500"
-      size="xl"
-    />
-  </Flex>
-);
-
 const ProductScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -83,7 +70,15 @@ const ProductScreen = () => {
       </Flex>
 
       {loading ? (
-        <Loader />
+        <Flex alignItems="center" justifyContent="center">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Flex>
       ) : error ? (
         <Box
           bg="red.100"
@@ -131,7 +126,9 @@ const ProductScreen = () => {
                     {'★'.repeat(Math.floor(product?.rating))}
                     {'☆'.repeat(5 - Math.floor(product?.rating))}
                   </Text>
-                  <Text fontSize="sm">{`${product?.numReviews || 0} reviews`}</Text>
+                  <Text fontSize="sm">
+                    {`${product?.numReviews || 0} reviews`}
+                  </Text>
                 </Flex>
                 <Text fontSize="xl" fontWeight="bold" color="teal.800">
                   ${product?.price}
