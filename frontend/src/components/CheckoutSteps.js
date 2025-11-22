@@ -3,6 +3,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   Flex,
+  Icon,
 } from "@chakra-ui/react";
 import { IoCaretForwardSharp } from "react-icons/io5";
 import { Link as RouterLink } from "react-router-dom";
@@ -10,7 +11,7 @@ import { Link as RouterLink } from "react-router-dom";
 const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
   return (
     <Flex justifyContent="center" mb="8">
-      <Breadcrumb separator={<IoCaretForwardSharp color="gray.500" />}>
+      <Breadcrumb.Root separator={<Icon as={IoCaretForwardSharp} color="gray.500" />}>
         {/* Step 1 */}
         <BreadcrumbItem>
           {step1 ? (
@@ -18,7 +19,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
               Login
             </BreadcrumbLink>
           ) : (
-            <BreadcrumbLink _disabled color="gray.400">
+            <BreadcrumbLink disabled color="gray.400">
               Login
             </BreadcrumbLink>
           )}
@@ -31,7 +32,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
               Shipping
             </BreadcrumbLink>
           ) : (
-            <BreadcrumbLink _disabled color="gray.400">
+            <BreadcrumbLink disabled color="gray.400">
               Shipping
             </BreadcrumbLink>
           )}
@@ -44,7 +45,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
               Payment
             </BreadcrumbLink>
           ) : (
-            <BreadcrumbLink _disabled color="gray.400">
+            <BreadcrumbLink disabled color="gray.400">
               Payment
             </BreadcrumbLink>
           )}
@@ -57,12 +58,12 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
               Place Order
             </BreadcrumbLink>
           ) : (
-            <BreadcrumbLink _disabled color="gray.400">
+            <BreadcrumbLink disabled color="gray.400">
               Place Order
             </BreadcrumbLink>
           )}
         </BreadcrumbItem>
-      </Breadcrumb>
+      </Breadcrumb.Root>
     </Flex>
   );
 };
