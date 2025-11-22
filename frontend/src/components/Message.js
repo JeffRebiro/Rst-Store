@@ -1,4 +1,4 @@
-import { Alert } from "@chakra-ui/react";
+import { Alert } from "@chakra-ui/react"
 
 const Message = ({ type = "info", children }) => {
   return (
@@ -8,7 +8,7 @@ const Message = ({ type = "info", children }) => {
         <Alert.Title>{children}</Alert.Title>
       </Alert.Content>
     </Alert.Root>
-  );
-};
+  )
+}
 
-export default Message;
+export default Message

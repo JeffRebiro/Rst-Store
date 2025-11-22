@@ -5,93 +5,77 @@ import {
   Grid,
   Heading,
   Image,
-  Select,
   Text,
   Textarea,
-  Spinner,
-} from "@chakra-ui/react";
+  Field,
+  NativeSelect,
+} from "@chakra-ui/react"
 
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom"
 
 import {
   createProductReview,
   listProductDetails,
-} from "../actions/productActions";
-import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants";
+} from "../actions/productActions"
+import Loader from "../components/Loader"
+import Message from "../components/Message"
+import Rating from "../components/Rating"
+import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants"
 
 const ProductScreen = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { id } = useParams()
 
-  const [qty, setQty] = useState(1);
-  const [rating, setRating] = useState(1);
-  const [comment, setComment] = useState("");
+  const [qty, setQty] = useState(1)
+  const [rating, setRating] = useState(1)
+  const [comment, setComment] = useState("")
 
-  const productDetails = useSelector((state) => state.productDetails);
-  const { loading, error, product } = productDetails;
+  const productDetails = useSelector((state) => state.productDetails)
+  const { loading, error, product } = productDetails
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
 
   const productReviewCreate = useSelector(
     (state) => state.productReviewCreate
-  );
+  )
   const { success: successProductReview, error: errorProductReview } =
-    productReviewCreate;
+    productReviewCreate
 
   useEffect(() => {
     if (successProductReview) {
-      alert("Review submitted");
-      setRating(1);
-      setComment("");
-      dispatch({ type: PRODUCT_REVIEW_CREATE_RESET });
+      alert("Review submitted")
+      setRating(1)
+      setComment("")
+      dispatch({ type: PRODUCT_REVIEW_CREATE_RESET })
     }
-    dispatch(listProductDetails(id));
-  }, [id, dispatch, successProductReview]);
+    dispatch(listProductDetails(id))
+  }, [id, dispatch, successProductReview])
 
   const addToCartHandler = () => {
-    navigate(`/cart/${id}?qty=${qty}`);
-  };
+    navigate(`/cart/${id}?qty=${qty}`)
+  }
 
   const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(createProductReview(id, { rating, comment }));
-  };
+    e.preventDefault()
+    dispatch(createProductReview(id, { rating, comment }))
+  }
 
   return (
     <>
       <Flex mb="5">
-        <Button as={RouterLink} to="/" colorScheme="teal" variant="outline">
+        <Button as={RouterLink} to="/" colorPalette="teal" variant="outline">
           Go Back
         </Button>
       </Flex>
 
       {loading ? (
-        <Flex alignItems="center" justifyContent="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
+        <Loader />
       ) : error ? (
-        <Box
-          bg="red.100"
-          border="1px"
-          borderColor="red.300"
-          color="red.800"
-          px="4"
-          py="3"
-          borderRadius="md"
-          mb="4"
-        >
-          {error}
-        </Box>
+        <Message type="error">{error}</Message>
       ) : product ? (
         <>
           <Grid
@@ -121,15 +105,12 @@ const ProductScreen = () => {
                 <Text fontSize="lg" color="gray.500" mb="4">
                   {product?.brand}
                 </Text>
-                <Flex align="center" gap="1" mb="4">
-                  <Text color="yellow.500" fontSize="lg">
-                    {'★'.repeat(Math.floor(product?.rating))}
-                    {'☆'.repeat(5 - Math.floor(product?.rating))}
-                  </Text>
-                  <Text fontSize="sm">
-                    {`${product?.numReviews || 0} reviews`}
-                  </Text>
-                </Flex>
+                <Rating
+                  value={product?.rating}
+                  color="yellow.500"
+                  text={`${product?.numReviews || 0} reviews`}
+                  mb="4"
+                />
                 <Text fontSize="xl" fontWeight="bold" color="teal.800">
                   ${product?.price}
                 </Text>
@@ -153,23 +134,25 @@ const ProductScreen = () => {
                 {product?.countInStock > 0 && (
                   <Flex justifyContent="space-between" mb="4">
                     <Text>Qty:</Text>
-                    <Select
-                      value={qty}
-                      onChange={(e) => setQty(Number(e.target.value))}
+                    <NativeSelect.Root 
+                      value={qty} 
+                      onValueChange={(e) => setQty(Number(e.value))}
                       width="30%"
                     >
-                      {[...Array(product?.countInStock).keys()].map((i) => (
-                        <option value={i + 1} key={i + 1}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </Select>
+                      <NativeSelect.Field>
+                        {[...Array(product?.countInStock).keys()].map((i) => (
+                          <option value={i + 1} key={i + 1}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </NativeSelect.Field>
+                    </NativeSelect.Root>
                   </Flex>
                 )}
                 <Button
                   width="100%"
-                  colorScheme="teal"
-                  isDisabled={product?.countInStock === 0}
+                  colorPalette="teal"
+                  disabled={product?.countInStock === 0}
                   onClick={addToCartHandler}
                 >
                   Add to Cart
@@ -185,18 +168,7 @@ const ProductScreen = () => {
             </Heading>
 
             {product?.reviews?.length === 0 ? (
-              <Box
-                bg="blue.100"
-                border="1px"
-                borderColor="blue.300"
-                color="blue.800"
-                px="4"
-                py="3"
-                borderRadius="md"
-                mb="4"
-              >
-                No Reviews
-              </Box>
+              <Message>No Reviews</Message>
             ) : (
               product?.reviews?.map((review) => (
                 <Box
@@ -208,12 +180,7 @@ const ProductScreen = () => {
                 >
                   <Flex justifyContent="space-between" alignItems="center">
                     <Text fontWeight="bold">{review.name}</Text>
-                    <Flex align="center" gap="1">
-                      <Text color="red.500" fontSize="lg">
-                        {'★'.repeat(Math.floor(review.rating))}
-                        {'☆'.repeat(5 - Math.floor(review.rating))}
-                      </Text>
-                    </Flex>
+                    <Rating value={review.rating} />
                   </Flex>
                   <Text mt="2" color="gray.600">
                     {review.comment}
@@ -223,73 +190,48 @@ const ProductScreen = () => {
             )}
 
             {errorProductReview && (
-              <Box
-                bg="red.100"
-                border="1px"
-                borderColor="red.300"
-                color="red.800"
-                px="4"
-                py="3"
-                borderRadius="md"
-                mb="4"
-              >
-                {errorProductReview}
-              </Box>
+              <Message type="error">{errorProductReview}</Message>
             )}
 
             {userInfo ? (
               <form onSubmit={submitHandler}>
-                <Box mb="4">
-                  <Text as="label" display="block" mb="2" fontWeight="medium">
-                    Rating
-                  </Text>
-                  <Select
-                    placeholder="Select Option"
-                    value={rating}
-                    onChange={(e) => setRating(Number(e.target.value))}
+                <Field.Root mb="4">
+                  <Field.Label>Rating</Field.Label>
+                  <NativeSelect.Root 
+                    value={rating} 
+                    onValueChange={(e) => setRating(Number(e.value))}
                   >
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Okay</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
-                  </Select>
-                </Box>
+                    <NativeSelect.Field placeholder="Select Option">
+                      <option value="1">1 - Poor</option>
+                      <option value="2">2 - Okay</option>
+                      <option value="3">3 - Good</option>
+                      <option value="4">4 - Very Good</option>
+                      <option value="5">5 - Excellent</option>
+                    </NativeSelect.Field>
+                  </NativeSelect.Root>
+                </Field.Root>
 
-                <Box mb="4">
-                  <Text as="label" display="block" mb="2" fontWeight="medium">
-                    Comment
-                  </Text>
+                <Field.Root mb="4">
+                  <Field.Label>Comment</Field.Label>
                   <Textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here..."
                   />
-                </Box>
+                </Field.Root>
 
-                <Button type="submit" colorScheme="teal">
+                <Button type="submit" colorPalette="teal">
                   Submit Review
                 </Button>
               </form>
             ) : (
-              <Box
-                bg="blue.100"
-                border="1px"
-                borderColor="blue.300"
-                color="blue.800"
-                px="4"
-                py="3"
-                borderRadius="md"
-                mb="4"
-              >
-                Please log in to write a review
-              </Box>
+              <Message>Please log in to write a review</Message>
             )}
           </Box>
         </>
       ): null}
     </>
-  );
-};
+  )
+}
 
-export default ProductScreen;
+export default ProductScreen
