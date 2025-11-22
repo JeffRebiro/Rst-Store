@@ -8,7 +8,6 @@ import {
   Select,
   Text,
   Textarea,
-  Spinner,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -19,47 +18,10 @@ import {
   createProductReview,
   listProductDetails,
 } from "../actions/productActions";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import Rating from "../components/Rating";
 import { PRODUCT_REVIEW_CREATE_RESET } from "../constants/productConstants";
-
-// Inline Loader component
-const Loader = () => (
-  <Flex alignItems="center" justifyContent="center">
-    <Spinner
-      thickness="4px"
-      speed="0.65s"
-      emptyColor="gray.200"
-      color="blue.500"
-      size="xl"
-    />
-  </Flex>
-);
-
-// Inline Message component
-const Message = ({ type = "info", children }) => (
-  <Box
-    bg={type === "error" ? "red.100" : "blue.100"}
-    border="1px"
-    borderColor={type === "error" ? "red.300" : "blue.300"}
-    color={type === "error" ? "red.800" : "blue.800"}
-    px="4"
-    py="3"
-    borderRadius="md"
-    mb="4"
-  >
-    {children}
-  </Box>
-);
-
-// Inline Rating component
-const Rating = ({ value, text, color = "red.500" }) => (
-  <Flex align="center" gap="1">
-    <Text color={color} fontSize="lg">
-      {'★'.repeat(Math.floor(value))}
-      {'☆'.repeat(5 - Math.floor(value))}
-    </Text>
-    {text && <Text fontSize="sm">{text}</Text>}
-  </Flex>
-);
 
 const ProductScreen = () => {
   const dispatch = useDispatch();
