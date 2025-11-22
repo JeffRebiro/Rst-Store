@@ -8,9 +8,7 @@ import {
   Select,
   Text,
   Textarea,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
+  Field,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -195,8 +193,8 @@ const ProductScreen = () => {
 
             {userInfo ? (
               <form onSubmit={submitHandler}>
-                <FormControl mb="4">
-                  <FormLabel>Rating</FormLabel>
+                <Field.Root mb="4">
+                  <Field.Label>Rating</Field.Label>
                   <Select
                     placeholder="Select Option"
                     value={rating}
@@ -208,16 +206,16 @@ const ProductScreen = () => {
                     <option value="4">4 - Very Good</option>
                     <option value="5">5 - Excellent</option>
                   </Select>
-                </FormControl>
+                </Field.Root>
 
-                <FormControl mb="4">
-                  <FormLabel>Comment</FormLabel>
+                <Field.Root mb="4">
+                  <Field.Label>Comment</Field.Label>
                   <Textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here..."
                   />
-                </FormControl>
+                </Field.Root>
 
                 <Button type="submit" colorScheme="teal">
                   Submit Review
