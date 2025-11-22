@@ -5,6 +5,7 @@ import {
   VStack,
   Box,
   RadioGroup,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +50,7 @@ const PaymentScreen = () => {
           bg={isLight ? "white" : "gray.700"}
           boxShadow="lg"
           p="8"
-          rounded="lg"
+          borderRadius="lg"
         >
           <CheckoutSteps step1 step2 step3 />
 
@@ -64,19 +65,48 @@ const PaymentScreen = () => {
                 onValueChange={setPaymentMethodRadio}
               >
                 <VStack align="start" spacing="4">
+                  {/* PayPal Option */}
                   <RadioGroup.Item value="paypal">
                     <RadioGroup.ItemHiddenInput />
                     <RadioGroup.ItemIndicator />
                     <RadioGroup.ItemText>
-                      PayPal or Credit/Debit Card
+                      <Text fontWeight="medium">PayPal or Credit/Debit Card</Text>
+                      <Text fontSize="sm" color="gray.600">
+                        Pay securely with PayPal, Visa, Mastercard, or American Express
+                      </Text>
                     </RadioGroup.ItemText>
                   </RadioGroup.Item>
+
+                  {/* Stripe Option */}
+                  <RadioGroup.Item value="stripe">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>
+                      <Text fontWeight="medium">Stripe</Text>
+                      <Text fontSize="sm" color="gray.600">
+                        Pay with credit/debit card using Stripe
+                      </Text>
+                    </RadioGroup.ItemText>
+                  </RadioGroup.Item>
+
+                  {/* Bank Transfer Option */}
+                  <RadioGroup.Item value="bank_transfer">
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>
+                      <Text fontWeight="medium">Bank Transfer</Text>
+                      <Text fontSize="sm" color="gray.600">
+                        Transfer money directly to our bank account
+                      </Text>
+                    </RadioGroup.ItemText>
+                  </RadioGroup.Item>
+
                 </VStack>
               </RadioGroup.Root>
 
               <Button
                 type="submit"
-                colorScheme="teal"
+                colorPalette="teal"
                 size="lg"
                 width="full"
                 mt="4"

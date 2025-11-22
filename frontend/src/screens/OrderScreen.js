@@ -141,7 +141,7 @@ const OrderScreen = () => {
           {!order.isPaid && (
             <Box mt="8">
               {loadingPay ? <Loader /> : (
-                <PayPalScriptProvider options={{"client-id": "AZwy0oygiOxgjdxigvPhJ5pzAthzW82-Th3lX70dQaxG7as0HFSvDswmv9N0bfCjraJO6nyw78j7lWWS", components: "buttons"}}>
+                <PayPalScriptProvider options={{"client-id": "AbCWawRqgTtLVVCXOZojr41rc7ooz60ClZWU8y8UynDk3KmHn5syU0o41cyMi5iyh_E3brYWPGuLOFfr", components: "buttons"}}>
                   <PayPalButtons
                     createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] })}
                     onApprove={(data, actions) => actions.order.capture().then((details) => {
