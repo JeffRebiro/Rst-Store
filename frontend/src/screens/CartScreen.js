@@ -9,7 +9,9 @@ import {
   Link,
   Text,
   VStack,
+  Stack,
   NativeSelect,
+  Separator,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { IoTrashBinSharp } from "react-icons/io5";
@@ -52,7 +54,7 @@ const CartScreen = () => {
       <Heading as="h1" mb="8" fontWeight="bold" fontSize="3xl">
         Shopping Cart
       </Heading>
-      <Flex>
+      <Flex direction="column" gap="8" w="full">
         {cartItems.length === 0 ? (
           <Message>Your cart is empty</Message>
         ) : (
@@ -62,13 +64,13 @@ const CartScreen = () => {
             w="full"
           >
             {/* Column 1: Cart Items */}
-            <VStack spacing="6" w="full">
+            <VStack gap="6" w="full">
               {cartItems.map((item) => (
                 <Grid
                   key={item.product}
                   templateColumns={{
                     sm: "1fr",
-                    md: "1fr 3fr 1fr 1fr 1fr",
+                    md: "1fr 3fr 1fr 1fr",
                   }}
                   gap="6"
                   alignItems="center"
@@ -91,25 +93,26 @@ const CartScreen = () => {
 
                   {/* Product Name */}
                   <Text fontWeight="medium" fontSize="lg" lineClamp={2}>
-                    <Link as={RouterLink} to={`/product/${item.product}`}>
-                      {item.name}
+                    <Link asChild>
+                      <RouterLink to={`/product/${item.product}`}>
+                        {item.name}
+                      </RouterLink>
                     </Link>
                   </Text>
 
                   {/* Product Price */}
                   <Text fontWeight="bold" fontSize="lg" color="blue.600">
-                    ${item.price}
+                    ₹{item.price}
                   </Text>
 
-                  {/* Quantity Select Box */}
-                  <NativeSelect.Root 
-                    value={item.qty.toString()}
-                    onValueChange={(e) =>
-                      dispatch(addToCart(item.product, +e.value))
+                  {/* Quantity Select Box - Changed from Select to NativeSelect */}
+                  <NativeSelect.Root
+                    value={item.qty}
+                    onValueChange={(details) =>
+                      dispatch(addToCart(item.product, +details.value))
                     }
-                    width="70px"
-                    variant="outline"
                     size="sm"
+                    css={{ width: "70px" }}
                   >
                     <NativeSelect.Field>
                       {[...Array(item.countInStock).keys()].map((i) => (
@@ -127,7 +130,9 @@ const CartScreen = () => {
                     colorPalette="red"
                     variant="outline"
                     onClick={() => removeFromCartHandler(item.product)}
-                    _hover={{ bgColor: "red.600", color: "white" }}
+                    css={{
+                      "&:hover": { backgroundColor: "red.600", color: "white" },
+                    }}
                   >
                     <Icon as={IoTrashBinSharp} />
                   </Button>
@@ -142,32 +147,53 @@ const CartScreen = () => {
               p="8"
               borderRadius="lg"
               boxShadow="md"
+              position="sticky"
+              top="10"
+              alignItems="center"
             >
               <Heading as="h2" fontSize="2xl" mb="4" fontWeight="bold">
                 Cart Summary
               </Heading>
               <Text fontWeight="bold" fontSize="lg" color="gray.700" mb="4">
                 Subtotal (
-                {cartItems.reduce((acc, currVal) => acc + currVal.qty, 0)} items)
+                {cartItems.reduce((acc, currVal) => acc + currVal.qty, 0)}{" "}
+                items)
               </Text>
               <Text fontWeight="bold" fontSize="3xl" color="green.600" mb="6">
-                ${" "}
+                ₹{" "}
                 {cartItems.reduce(
                   (acc, currVal) => acc + currVal.price * currVal.qty,
                   0
                 )}
               </Text>
+              <Stack direction="column" gap="4" w="full">
+                <Button
+                  type="button"
+                  size="lg"
+                  colorPalette="teal"
+                  disabled={cartItems.length === 0}
+                  onClick={checkoutHandler}
+                  css={{
+                    "&:hover": { backgroundColor: "teal.700" },
+                  }}
+                  w="full"
+                >
+                  Proceed to Checkout
+                </Button>
 
-              <Button
-                type="button"
-                size="lg"
-                colorPalette="teal"
-                disabled={cartItems.length === 0}
-                onClick={checkoutHandler}
-                _hover={{ bgColor: "teal.700" }}
-              >
-                Proceed to Checkout
-              </Button>
+                {/* Divider changed to Separator */}
+                <Separator />
+
+                <Button
+                  variant="outline"
+                  colorPalette="gray"
+                  size="lg"
+                  w="full"
+                  onClick={() => navigate("/")}
+                >
+                  Continue Shopping
+                </Button>
+              </Stack>
             </Flex>
           </Grid>
         )}

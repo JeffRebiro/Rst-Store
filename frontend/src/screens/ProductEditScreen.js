@@ -1,12 +1,16 @@
 import {
   Button,
   Flex,
-  Field,
+  FormControl,
+  FormLabel,
   Heading,
   Input,
-  Link,
   Box,
   VStack,
+  useToast,
+  IconButton,
+  Image,
+  Field,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +26,7 @@ import axios from "axios";
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const { id: productId } = useParams();
 
@@ -32,6 +37,7 @@ const ProductEditScreen = () => {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [countInStock, setCountInStock] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
@@ -45,8 +51,12 @@ const ProductEditScreen = () => {
 
   useEffect(() => {
     if (successUpdate) {
-      // Simple alert as fallback for toast
-      alert("Product updated successfully!");
+      toast({
+        title: "Product Updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
       dispatch({ type: PRODUCT_UPDATE_RESET });
       navigate(`/admin/productlist`);
     } else {
@@ -62,7 +72,7 @@ const ProductEditScreen = () => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, navigate, productId, product, successUpdate]);
+  }, [dispatch, navigate, productId, product, successUpdate, toast]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -82,37 +92,53 @@ const ProductEditScreen = () => {
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     const formData = new FormData();
     formData.append("image", file);
 
     try {
+      setUploading(true);
       const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       };
 
       const { data } = await axios.post(`/api/uploads`, formData, config);
-      setImage(data);
+
+      // backend returns { url, public_id }
+      setImage(data.url || data.secure_url || data);
+      setUploading(false);
+      toast({
+        title: "Image uploaded",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     } catch (err) {
       console.error(err);
+      setUploading(false);
+      toast({
+        title: "Upload failed",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
-      <Box px="8" py="4">
-        <Button
+      <Box px={8} py={4}>
+        <IconButton
           asChild
-          mb="5"
+          to="/admin/productlist"
+          aria-label="Go Back"
+          mb={5}
           colorPalette="teal"
-          variant="outline"
         >
           <RouterLink to="/admin/productlist">
-            <FaArrowLeft style={{ marginRight: '8px' }} />
-            Go Back
+            <FaArrowLeft />
           </RouterLink>
-        </Button>
+        </IconButton>
 
         <Flex w="full" alignItems="center" justifyContent="center" py="5">
           <FormContainer>
@@ -129,7 +155,7 @@ const ProductEditScreen = () => {
               <Message type="error">{error}</Message>
             ) : (
               <form onSubmit={submitHandler}>
-                <VStack gap="4">
+                <VStack gap={4}>
                   {/* NAME */}
                   <Field.Root required>
                     <Field.Label>Name</Field.Label>
@@ -164,8 +190,20 @@ const ProductEditScreen = () => {
                     <Input 
                       type="file" 
                       onChange={uploadFileHandler} 
-                      mt="2" 
+                      css={{ marginTop: "2" }} 
                     />
+                    {uploading && <Box>Uploading...</Box>}
+                    {image && (
+                      <Image 
+                        src={image} 
+                        alt="preview" 
+                        css={{ 
+                          boxSize: "150px", 
+                          objectFit: "cover", 
+                          marginTop: "2" 
+                        }} 
+                      />
+                    )}
                   </Field.Root>
 
                   {/* DESCRIPTION */}
@@ -217,7 +255,7 @@ const ProductEditScreen = () => {
                     loading={loadingUpdate}
                     colorPalette="teal"
                     width="full"
-                    mt="4"
+                    css={{ marginTop: "4" }}
                   >
                     Update Product
                   </Button>
