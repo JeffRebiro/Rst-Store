@@ -7,13 +7,25 @@ import {
   CART_RESET,
 } from "../constants/cartConstants";
 
+// Track current user to avoid reloading unnecessarily
+let currentUserId = null;
+
 // Helper function to load cart from localStorage based on user
-const loadInitialState = () => {
+const loadCartForUser = () => {
   try {
     // Get user info if available
     const userInfo = localStorage.getItem("userInfo")
       ? JSON.parse(localStorage.getItem("userInfo"))
       : null;
+    
+    const userId = userInfo?._id || "guest";
+    
+    // Only reload if user changed
+    if (userId === currentUserId) {
+      return null; // Don't reload, keep current state
+    }
+    
+    currentUserId = userId;
     
     // Use user-specific cart key
     const cartKey = userInfo ? `cartItems_${userInfo._id}` : "cartItems_guest";
@@ -44,7 +56,14 @@ const loadInitialState = () => {
   }
 };
 
-export const cartReducer = (state = loadInitialState(), action) => {
+// Initial state
+const initialState = loadCartForUser() || {
+  cartItems: [],
+  shippingAddress: {},
+  paymentMethod: "",
+};
+
+export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case CART_ADD_ITEM:
       const item = action.payload;
@@ -83,7 +102,13 @@ export const cartReducer = (state = loadInitialState(), action) => {
       };
       
     case CART_RESET:
-      return loadInitialState(); // Reload cart based on current user
+      // Force reload for new user
+      const newState = loadCartForUser();
+      return newState || {
+        cartItems: [],
+        shippingAddress: {},
+        paymentMethod: "",
+      };
       
     default:
       return state;
