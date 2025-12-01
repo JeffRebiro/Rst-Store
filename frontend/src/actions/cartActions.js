@@ -9,7 +9,7 @@ import {
   CART_RESET,
 } from "../constants/cartConstants";
 
-export const addToCart = (id, qty) => async (dispatch, getState) => {
+export const addToCart = (id, qty) => async (dispatch) => {
   const { data } = await axios.get(`https://rst-store-enz3.onrender.com/api/products/${id}`);
 
   dispatch({

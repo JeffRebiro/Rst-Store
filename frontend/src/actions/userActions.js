@@ -84,7 +84,7 @@ export const logout = () => async (dispatch) => {
   dispatch({ type: ORDER_MY_LIST_RESET });
   dispatch({ type: ORDER_DETAILS_RESET });
   dispatch({ type: USER_LIST_RESET });
-  dispatch({ type: CART_RESET }); // ADD THIS LINE - Resets cart on logout
+  dispatch({ type: CART_RESET }); 
 };
 
 export const register = (name, email, password) => async (dispatch) => {
