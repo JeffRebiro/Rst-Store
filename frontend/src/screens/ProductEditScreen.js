@@ -7,7 +7,6 @@ import {
   Input,
   Box,
   VStack,
-  useToast,
   IconButton,
   Image,
   Field,
@@ -22,11 +21,11 @@ import Message from "../components/Message";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
 import { FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
+import { toaster } from "../components/ui/toaster"; // Import your toaster
 
 const ProductEditScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const toast = useToast();
 
   const { id: productId } = useParams();
 
@@ -51,11 +50,11 @@ const ProductEditScreen = () => {
 
   useEffect(() => {
     if (successUpdate) {
-      toast({
+      // Updated toast usage
+      toaster.create({
         title: "Product Updated.",
         status: "success",
         duration: 3000,
-        isClosable: true,
       });
       dispatch({ type: PRODUCT_UPDATE_RESET });
       navigate(`/admin/productlist`);
@@ -72,7 +71,7 @@ const ProductEditScreen = () => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, navigate, productId, product, successUpdate, toast]);
+  }, [dispatch, navigate, productId, product, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -107,20 +106,20 @@ const ProductEditScreen = () => {
       // backend returns { url, public_id }
       setImage(data.url || data.secure_url || data);
       setUploading(false);
-      toast({
+      // Updated toast usage
+      toaster.create({
         title: "Image uploaded",
         status: "success",
         duration: 2000,
-        isClosable: true,
       });
     } catch (err) {
       console.error(err);
       setUploading(false);
-      toast({
+      // Updated toast usage
+      toaster.create({
         title: "Upload failed",
         status: "error",
         duration: 3000,
-        isClosable: true,
       });
     }
   };
@@ -130,7 +129,6 @@ const ProductEditScreen = () => {
       <Box px={8} py={4}>
         <IconButton
           asChild
-          to="/admin/productlist"
           aria-label="Go Back"
           mb={5}
           colorPalette="teal"
@@ -198,7 +196,8 @@ const ProductEditScreen = () => {
                         src={image} 
                         alt="preview" 
                         css={{ 
-                          boxSize: "150px", 
+                          width: "150px",
+                          height: "150px",
                           objectFit: "cover", 
                           marginTop: "2" 
                         }} 
