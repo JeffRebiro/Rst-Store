@@ -34,6 +34,7 @@ import {
   USER_UPDATE_REQUEST,
   USER_UPDATE_SUCCESS,
 } from "../constants/userConstants";
+import { CART_RESET } from "../constants/cartConstants"; // ADD THIS IMPORT
 
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -83,6 +84,7 @@ export const logout = () => async (dispatch) => {
   dispatch({ type: ORDER_MY_LIST_RESET });
   dispatch({ type: ORDER_DETAILS_RESET });
   dispatch({ type: USER_LIST_RESET });
+  dispatch({ type: CART_RESET }); // ADD THIS LINE - Resets cart on logout
 };
 
 export const register = (name, email, password) => async (dispatch) => {

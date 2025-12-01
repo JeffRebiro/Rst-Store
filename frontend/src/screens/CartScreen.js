@@ -1,3 +1,4 @@
+// CartScreen.js
 import {
   Box,
   Button,
@@ -22,7 +23,7 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { addToCart, removeFromCart } from "../actions/cartActions";
+import { addToCart, removeFromCart, resetCart } from "../actions/cartActions";
 import Message from "../components/Message";
 
 const CartScreen = () => {
@@ -34,6 +35,14 @@ const CartScreen = () => {
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+  
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  // Reset cart when user changes (logs in/out)
+  useEffect(() => {
+    dispatch(resetCart());
+  }, [dispatch, userInfo]);
 
   useEffect(() => {
     if (id) {
@@ -46,7 +55,11 @@ const CartScreen = () => {
   };
 
   const checkoutHandler = () => {
-    navigate(`/login?redirect=/shipping`);
+    if (!userInfo) {
+      navigate(`/login?redirect=/shipping`);
+    } else {
+      navigate(`/shipping`);
+    }
   };
 
   return (
@@ -78,7 +91,9 @@ const CartScreen = () => {
                   p="4"
                   borderRadius="lg"
                   boxShadow="sm"
-                  _hover={{ boxShadow: "md" }}
+                  css={{
+                    "&:hover": { boxShadow: "md" },
+                  }}
                   bg="white"
                 >
                   {/* Product Image */}
@@ -105,7 +120,7 @@ const CartScreen = () => {
                     ₹{item.price}
                   </Text>
 
-                  {/* Quantity Select Box - Changed from Select to NativeSelect */}
+                  {/* Quantity Select Box */}
                   <NativeSelect.Root
                     value={item.qty}
                     onValueChange={(details) =>
@@ -178,10 +193,9 @@ const CartScreen = () => {
                   }}
                   w="full"
                 >
-                  Proceed to Checkout
+                  {userInfo ? "Proceed to Checkout" : "Login to Checkout"}
                 </Button>
 
-                {/* Divider changed to Separator */}
                 <Separator />
 
                 <Button
