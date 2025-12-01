@@ -1,3 +1,4 @@
+// cartActions.js
 import axios from "axios";
 import {
   CART_ADD_ITEM,
@@ -7,11 +8,6 @@ import {
   CART_CLEAR_ITEMS,
   CART_RESET,
 } from "../constants/cartConstants";
-
-// Helper function to get user-specific cart key
-const getCartKey = (userId) => {
-  return userId ? `cartItems_${userId}` : "cartItems_guest";
-};
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
   const { data } = await axios.get(`https://rst-store-enz3.onrender.com/api/products/${id}`);
@@ -27,50 +23,21 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
       qty,
     },
   });
-
-  // Get user from state and save with user-specific key
-  const {
-    userLogin: { userInfo },
-  } = getState();
-  
-  const cartKey = getCartKey(userInfo?._id);
-  localStorage.setItem(cartKey, JSON.stringify(getState().cart.cartItems));
 };
 
-export const removeFromCart = (id) => (dispatch, getState) => {
+export const removeFromCart = (id) => (dispatch) => {
   dispatch({ type: CART_REMOVE_ITEM, payload: id });
-
-  // Get user from state and save with user-specific key
-  const {
-    userLogin: { userInfo },
-  } = getState();
-  
-  const cartKey = getCartKey(userInfo?._id);
-  localStorage.setItem(cartKey, JSON.stringify(getState().cart.cartItems));
 };
 
 export const saveShippingAddress = (data) => (dispatch) => {
   dispatch({ type: CART_SAVE_SHIPPING_ADDRESS, payload: data });
-  localStorage.setItem("shippingAddress", JSON.stringify(data));
 };
 
 export const savePaymentMethod = (data) => (dispatch) => {
   dispatch({ type: CART_SAVE_PAYMENT_METHOD, payload: data });
-  localStorage.setItem("paymentMethod", JSON.stringify(data));
 };
 
 export const clearCart = () => (dispatch) => {
   dispatch({ type: CART_CLEAR_ITEMS });
 };
 
-export const resetCart = () => (dispatch, getState) => {
-  // Get current user info to clear their specific cart
-  const {
-    userLogin: { userInfo },
-  } = getState();
-  
-  const cartKey = getCartKey(userInfo?._id);
-  localStorage.removeItem(cartKey);
-  
-  dispatch({ type: CART_RESET });
-};

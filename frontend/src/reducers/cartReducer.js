@@ -1,3 +1,4 @@
+// cartReducer.js
 import {
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,
@@ -7,32 +8,28 @@ import {
   CART_RESET,
 } from "../constants/cartConstants";
 
-// Track current user to avoid reloading unnecessarily
-let currentUserId = null;
+// Helper function to get user-specific cart key
+const getCartKey = (userId) => {
+  return userId ? `cartItems_${userId}` : "cartItems_guest";
+};
 
-// Helper function to load cart from localStorage based on user
-const loadCartForUser = () => {
+// Helper function to load cart from localStorage based on current user
+const loadCartFromStorage = () => {
   try {
     // Get user info if available
     const userInfo = localStorage.getItem("userInfo")
       ? JSON.parse(localStorage.getItem("userInfo"))
       : null;
     
-    const userId = userInfo?._id || "guest";
+    const userId = userInfo?._id;
+    const cartKey = getCartKey(userId);
     
-    // Only reload if user changed
-    if (userId === currentUserId) {
-      return null; // Don't reload, keep current state
-    }
-    
-    currentUserId = userId;
-    
-    // Use user-specific cart key
-    const cartKey = userInfo ? `cartItems_${userInfo._id}` : "cartItems_guest";
+    // Load cart items
     const cartItems = localStorage.getItem(cartKey)
       ? JSON.parse(localStorage.getItem(cartKey))
       : [];
 
+    // Load shipping and payment (these are shared for now)
     const shippingAddress = localStorage.getItem("shippingAddress")
       ? JSON.parse(localStorage.getItem("shippingAddress"))
       : {};
@@ -56,44 +53,69 @@ const loadCartForUser = () => {
   }
 };
 
-// Initial state
-const initialState = loadCartForUser() || {
-  cartItems: [],
-  shippingAddress: {},
-  paymentMethod: "",
-};
-
-export const cartReducer = (state = initialState, action) => {
+export const cartReducer = (state = loadCartFromStorage(), action) => {
   switch (action.type) {
     case CART_ADD_ITEM:
       const item = action.payload;
       const existsItem = state.cartItems.find(
         (i) => i.product === item.product
       );
+      let newCartItems;
+      
       if (existsItem) {
-        return {
-          ...state,
-          cartItems: state.cartItems.map((i) =>
-            i.product === existsItem.product ? item : i
-          ),
-        };
+        newCartItems = state.cartItems.map((i) =>
+          i.product === existsItem.product ? item : i
+        );
       } else {
-        return { ...state, cartItems: [...state.cartItems, item] };
+        newCartItems = [...state.cartItems, item];
       }
       
-    case CART_REMOVE_ITEM:
+      // Save to localStorage whenever cart changes
+      const userInfo = localStorage.getItem("userInfo")
+        ? JSON.parse(localStorage.getItem("userInfo"))
+        : null;
+      const userId = userInfo?._id;
+      const cartKey = getCartKey(userId);
+      localStorage.setItem(cartKey, JSON.stringify(newCartItems));
+      
       return {
         ...state,
-        cartItems: state.cartItems.filter((i) => i.product !== action.payload),
+        cartItems: newCartItems,
+      };
+      
+    case CART_REMOVE_ITEM:
+      const filteredItems = state.cartItems.filter((i) => i.product !== action.payload);
+      
+      // Save to localStorage
+      const userInfo2 = localStorage.getItem("userInfo")
+        ? JSON.parse(localStorage.getItem("userInfo"))
+        : null;
+      const userId2 = userInfo2?._id;
+      const cartKey2 = getCartKey(userId2);
+      localStorage.setItem(cartKey2, JSON.stringify(filteredItems));
+      
+      return {
+        ...state,
+        cartItems: filteredItems,
       };
       
     case CART_SAVE_SHIPPING_ADDRESS:
+      localStorage.setItem("shippingAddress", JSON.stringify(action.payload));
       return { ...state, shippingAddress: action.payload };
       
     case CART_SAVE_PAYMENT_METHOD:
+      localStorage.setItem("paymentMethod", JSON.stringify(action.payload));
       return { ...state, paymentMethod: action.payload };
       
     case CART_CLEAR_ITEMS:
+      // Clear current user's cart
+      const userInfo3 = localStorage.getItem("userInfo")
+        ? JSON.parse(localStorage.getItem("userInfo"))
+        : null;
+      const userId3 = userInfo3?._id;
+      const cartKey3 = getCartKey(userId3);
+      localStorage.removeItem(cartKey3);
+      
       return {
         ...state,
         cartItems: [],
@@ -102,13 +124,8 @@ export const cartReducer = (state = initialState, action) => {
       };
       
     case CART_RESET:
-      // Force reload for new user
-      const newState = loadCartForUser();
-      return newState || {
-        cartItems: [],
-        shippingAddress: {},
-        paymentMethod: "",
-      };
+      // Load fresh cart for current user
+      return loadCartFromStorage();
       
     default:
       return state;

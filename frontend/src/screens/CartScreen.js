@@ -13,7 +13,7 @@ import {
   NativeSelect,
   Separator,
 } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { IoTrashBinSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -37,32 +37,6 @@ const CartScreen = () => {
   
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  // Track previous user to detect changes
-  const prevUserRef = useRef(userInfo);
-
-  useEffect(() => {
-    // Only reset cart when user actually changes (logs in/out)
-    const prevUser = prevUserRef.current;
-    const currentUser = userInfo;
-    
-    // Check if user changed (logged in or logged out)
-    const userChanged = (
-      (prevUser && !currentUser) || // User logged out
-      (!prevUser && currentUser) || // User logged in
-      (prevUser && currentUser && prevUser._id !== currentUser._id) // Different user
-    );
-    
-    if (userChanged) {
-      // The cartReducer will automatically load the correct cart 
-      // based on the current user when CART_RESET is dispatched
-      // This happens in userActions.js logout function
-      // No need to manually reset here
-    }
-    
-    // Update the ref for next comparison
-    prevUserRef.current = userInfo;
-  }, [userInfo]);
 
   useEffect(() => {
     if (id) {
