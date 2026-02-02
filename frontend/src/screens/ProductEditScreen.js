@@ -50,7 +50,6 @@ const ProductEditScreen = () => {
 
   useEffect(() => {
     if (successUpdate) {
-      // Updated toast usage
       toaster.create({
         title: "Product Updated.",
         status: "success",
@@ -64,7 +63,7 @@ const ProductEditScreen = () => {
       } else {
         setName(product.name);
         setPrice(product.price);
-        setImage(product.image);
+        setImage(product.image); // ✅ existing image preserved
         setBrand(product.brand);
         setCategory(product.category);
         setCountInStock(product.countInStock);
@@ -80,7 +79,7 @@ const ProductEditScreen = () => {
         _id: productId,
         name,
         price,
-        image,
+        image, // ✅ will keep old image if unchanged
         brand,
         category,
         description,
@@ -103,10 +102,8 @@ const ProductEditScreen = () => {
 
       const { data } = await axios.post(`/api/uploads`, formData, config);
 
-      // backend returns { url, public_id }
       setImage(data.url || data.secure_url || data);
       setUploading(false);
-      // Updated toast usage
       toaster.create({
         title: "Image uploaded",
         status: "success",
@@ -115,7 +112,6 @@ const ProductEditScreen = () => {
     } catch (err) {
       console.error(err);
       setUploading(false);
-      // Updated toast usage
       toaster.create({
         title: "Upload failed",
         status: "error",
@@ -127,12 +123,7 @@ const ProductEditScreen = () => {
   return (
     <>
       <Box px={8} py={4}>
-        <IconButton
-          asChild
-          aria-label="Go Back"
-          mb={5}
-          colorPalette="teal"
-        >
+        <IconButton asChild aria-label="Go Back" mb={5} colorPalette="teal">
           <RouterLink to="/admin/productlist">
             <FaArrowLeft />
           </RouterLink>
@@ -177,7 +168,7 @@ const ProductEditScreen = () => {
                   </Field.Root>
 
                   {/* IMAGE */}
-                  <Field.Root required>
+                  <Field.Root>
                     <Field.Label>Image</Field.Label>
                     <Input
                       type="text"
@@ -185,22 +176,22 @@ const ProductEditScreen = () => {
                       value={image}
                       onChange={(e) => setImage(e.target.value)}
                     />
-                    <Input 
-                      type="file" 
-                      onChange={uploadFileHandler} 
-                      css={{ marginTop: "2" }} 
+                    <Input
+                      type="file"
+                      onChange={uploadFileHandler}
+                      css={{ marginTop: "2" }}
                     />
                     {uploading && <Box>Uploading...</Box>}
                     {image && (
-                      <Image 
-                        src={image} 
-                        alt="preview" 
-                        css={{ 
+                      <Image
+                        src={image}
+                        alt="preview"
+                        css={{
                           width: "150px",
                           height: "150px",
-                          objectFit: "cover", 
-                          marginTop: "2" 
-                        }} 
+                          objectFit: "cover",
+                          marginTop: "2",
+                        }}
                       />
                     )}
                   </Field.Root>

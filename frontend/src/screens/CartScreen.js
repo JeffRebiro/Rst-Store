@@ -13,36 +13,21 @@ import {
   NativeSelect,
   Separator,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
 import { IoTrashBinSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Link as RouterLink,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { addToCart, removeFromCart } from "../actions/cartActions";
 import Message from "../components/Message";
 
 const CartScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const qty = searchParams.get("qty");
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
-  
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  useEffect(() => {
-    if (id) {
-      dispatch(addToCart(id, +qty));
-    }
-  }, [dispatch, id, qty]);
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
@@ -75,22 +60,16 @@ const CartScreen = () => {
               {cartItems.map((item) => (
                 <Grid
                   key={item.product}
-                  templateColumns={{
-                    sm: "1fr",
-                    md: "1fr 3fr 1fr 1fr",
-                  }}
+                  templateColumns={{ sm: "1fr", md: "1fr 3fr 1fr 1fr" }}
                   gap="6"
                   alignItems="center"
                   w="full"
                   p="4"
                   borderRadius="lg"
                   boxShadow="sm"
-                  css={{
-                    "&:hover": { boxShadow: "md" },
-                  }}
+                  css={{ "&:hover": { boxShadow: "md" } }}
                   bg="white"
                 >
-                  {/* Product Image */}
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -100,7 +79,6 @@ const CartScreen = () => {
                     width="16"
                   />
 
-                  {/* Product Name */}
                   <Text fontWeight="medium" fontSize="lg" lineClamp={2}>
                     <Link asChild>
                       <RouterLink to={`/product/${item.product}`}>
@@ -109,12 +87,10 @@ const CartScreen = () => {
                     </Link>
                   </Text>
 
-                  {/* Product Price */}
                   <Text fontWeight="bold" fontSize="lg" color="blue.600">
                     ₹{item.price}
                   </Text>
 
-                  {/* Quantity Select Box */}
                   <NativeSelect.Root
                     value={item.qty}
                     onValueChange={(details) =>
@@ -132,7 +108,6 @@ const CartScreen = () => {
                     </NativeSelect.Field>
                   </NativeSelect.Root>
 
-                  {/* Remove Item Button */}
                   <Button
                     type="button"
                     size="sm"
@@ -165,8 +140,7 @@ const CartScreen = () => {
               </Heading>
               <Text fontWeight="bold" fontSize="lg" color="gray.700" mb="4">
                 Subtotal (
-                {cartItems.reduce((acc, currVal) => acc + currVal.qty, 0)}{" "}
-                items)
+                {cartItems.reduce((acc, currVal) => acc + currVal.qty, 0)} items)
               </Text>
               <Text fontWeight="bold" fontSize="3xl" color="green.600" mb="6">
                 ₹{" "}
@@ -182,9 +156,7 @@ const CartScreen = () => {
                   colorPalette="teal"
                   disabled={cartItems.length === 0}
                   onClick={checkoutHandler}
-                  css={{
-                    "&:hover": { backgroundColor: "teal.700" },
-                  }}
+                  css={{ "&:hover": { backgroundColor: "teal.700" } }}
                   w="full"
                 >
                   {userInfo ? "Proceed to Checkout" : "Login to Checkout"}

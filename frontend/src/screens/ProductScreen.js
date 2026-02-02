@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 
 import { createProductReview, listProductDetails } from "../actions/productActions";
+import { addToCart } from "../actions/cartActions";   // ✅ Import addToCart
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Rating from "../components/Rating";
@@ -53,8 +54,10 @@ const ProductScreen = () => {
     dispatch(listProductDetails(id));
   }, [id, dispatch, successProductReview]);
 
+  // ✅ Fixed Add to Cart Handler
   const addToCartHandler = () => {
-    navigate(`/cart/${id}?qty=${qty}`);
+    dispatch(addToCart(id, qty));   // Add product directly
+    navigate("/cart");              // Navigate without id/qty in URL
   };
 
   const submitHandler = (e) => {
@@ -64,70 +67,41 @@ const ProductScreen = () => {
 
   return (
     <>
+      {/* Back Button */}
       <Flex mb="5">
-        <Button
-          asChild
-          colorPalette="teal"
-          variant="outline"
-          size="sm"
-        >
-          <RouterLink to="/">
-            ← Back to Home
-          </RouterLink>
+        <Button asChild colorPalette="teal" variant="outline" size="sm">
+          <RouterLink to="/">← Back to Home</RouterLink>
         </Button>
       </Flex>
 
+      {/* Product Details */}
       {loading ? (
         <Loader />
       ) : error ? (
         <Message type="error">{error}</Message>
       ) : (
-        <Grid
-          templateColumns={{ base: "1fr", md: "2fr 1fr" }}
-          gap="10"
-          py="8"
-          px={{ base: "2", md: "8" }}
-        >
+        <Grid templateColumns={{ base: "1fr", md: "2fr 1fr" }} gap="10" py="8" px={{ base: "2", md: "8" }}>
           {/* Product Image */}
           <Flex align="center" justify="center" p="4">
-            <Image
-              src={product.image}
-              alt={product.name}
-              objectFit="contain"
-              w="100%"
-              maxH="500px"
-            />
+            <Image src={product.image} alt={product.name} objectFit="contain" w="100%" maxH="500px" />
           </Flex>
 
           {/* Product Info */}
-          <Flex direction="column" justify="space-between" bg="white" p="6" rounded="lg" shadow="md" _dark={{ bg: "gray.800" }}>
+          <Flex direction="column" justify="space-between" bg="white" p="6" rounded="lg" shadow="md">
             <VStack align="flex-start" gap="4">
-              <Heading fontSize="2xl" color="teal.600">
-                {product.name}
-              </Heading>
-              <Text fontSize="lg" color="gray.600">
-                Brand: <strong>{product.brand}</strong>
-              </Text>
+              <Heading fontSize="2xl" color="teal.600">{product.name}</Heading>
+              <Text fontSize="lg" color="gray.600">Brand: <strong>{product.brand}</strong></Text>
               <Flex align="center">
                 <Rating value={product.rating} text={`${product.numReviews} Reviews`} />
               </Flex>
               <Separator />
-              <Text fontSize="2xl" fontWeight="bold" color="teal.800">
-                ₹{product.price}
-              </Text>
+              <Text fontSize="2xl" fontWeight="bold" color="teal.800">₹{product.price}</Text>
 
-              <Badge
-                colorPalette={product.countInStock > 0 ? "green" : "red"}
-                fontSize="md"
-                p="1"
-                borderRadius="md"
-              >
+              <Badge colorPalette={product.countInStock > 0 ? "green" : "red"} fontSize="md" p="1" borderRadius="md">
                 {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
               </Badge>
 
-              <Text mt="4" color="gray.700" lineHeight="1.6" _dark={{ color: "gray.300" }}>
-                {product.description}
-              </Text>
+              <Text mt="4" color="gray.700" lineHeight="1.6">{product.description}</Text>
             </VStack>
 
             {/* Cart Interaction */}
@@ -135,16 +109,10 @@ const ProductScreen = () => {
               {product.countInStock > 0 && (
                 <Flex align="center" mb="4">
                   <Text mr="4">Qty:</Text>
-                  <NativeSelect.Root
-                    value={qty}
-                    onValueChange={({ value }) => setQty(value)}
-                    maxW="100px"
-                  >
+                  <NativeSelect.Root value={qty} onValueChange={({ value }) => setQty(Number(value))} maxW="100px">
                     <NativeSelect.Field borderColor="teal.500">
                       {[...Array(product.countInStock).keys()].map((x) => (
-                        <option key={x + 1} value={x + 1}>
-                          {x + 1}
-                        </option>
+                        <option key={x + 1} value={x + 1}>{x + 1}</option>
                       ))}
                     </NativeSelect.Field>
                   </NativeSelect.Root>
@@ -167,7 +135,7 @@ const ProductScreen = () => {
 
       {/* Review Section */}
       {!loading && !error && (
-        <Box mt="12" p={{ base: "4", md: "8" }} bg="white" borderRadius="lg" boxShadow="md" _dark={{ bg: "gray.800" }}>
+        <Box mt="12" p={{ base: "4", md: "8" }} bg="white" borderRadius="lg" boxShadow="md">
           <Heading as="h3" size="lg" mb="6" color="teal.700">
             Customer Reviews
           </Heading>
@@ -177,12 +145,12 @@ const ProductScreen = () => {
           ) : (
             <Stack gap="6">
               {product.reviews.map((review) => (
-                <Box key={review._id} p="4" bg="gray.50" borderRadius="md" shadow="sm" _dark={{ bg: "gray.700" }}>
+                <Box key={review._id} p="4" bg="gray.50" borderRadius="md" shadow="sm">
                   <Flex justify="space-between" align="center" mb="2">
                     <Text fontWeight="bold">{review.name}</Text>
                     <Rating value={review.rating} />
                   </Flex>
-                  <Text color="gray.600" _dark={{ color: "gray.300" }}>{review.comment}</Text>
+                  <Text color="gray.600">{review.comment}</Text>
                 </Box>
               ))}
             </Stack>
@@ -196,10 +164,7 @@ const ProductScreen = () => {
                 <Stack gap="4">
                   <Field.Root id="rating">
                     <Field.Label>Rating</Field.Label>
-                    <NativeSelect.Root
-                      value={rating}
-                      onValueChange={({ value }) => setRating(value)}
-                    >
+                    <NativeSelect.Root value={rating} onValueChange={({ value }) => setRating(Number(value))}>
                       <NativeSelect.Field placeholder="Select Rating">
                         <option value="1">1 - Poor</option>
                         <option value="2">2 - Fair</option>
