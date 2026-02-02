@@ -1,22 +1,29 @@
 import express from "express";
 import multer from "multer";
-import cloudinary from "../config/cloudinary.js";
+import path from "path";
+import { fileURLToPath } from "url";
 import fs from "fs";
 
 const router = express.Router();
+
+// Multer saves files temporarily in /uploads
 const upload = multer({ dest: "uploads/" });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "mern-products",
-    });
+    // Generate a unique filename
+    const filename = `image-${Date.now()}${path.extname(req.file.originalname)}`;
+    const localPath = path.join(__dirname, "../public/images", filename);
 
-    fs.unlinkSync(req.file.path);
+    // Move file from /uploads to /public/images
+    fs.renameSync(req.file.path, localPath);
 
+    // Respond with the URL path that frontend can use
     res.json({
-      url: result.secure_url,
-      public_id: result.public_id,
+      url: `/images/${filename}`,
     });
   } catch (err) {
     console.error(err);
@@ -25,4 +32,3 @@ router.post("/", upload.single("image"), async (req, res) => {
 });
 
 export default router;
-
